@@ -1,0 +1,34 @@
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <a href="<%= user.role === 'admin' ? '/admin' : '/dashboard' %>" class="brand-link">
+                <img src="/img/logo.png" alt="ICG400" class="brand-logo">
+                <h2>Premios integrantes ICG</h2>
+            </a>
+        </div>
+
+        <ul class="nav-menu">
+            <% if (user.role === 'admin') { %>
+                <li><a href="/admin" class="nav-link">Dashboard</a></li>
+                <li><a href="/admin/categories" class="nav-link">Gestionar Categorías</a></li>
+                <li><a href="/admin/results" class="nav-link">Resultados</a></li>
+                <li><a href="/admin/users" class="nav-link">Usuarios</a></li>
+            <% } else { %>
+                <li><a href="/dashboard" class="nav-link">Mis Votos</a></li>
+                <li><a href="/categories" class="nav-link">Categorías</a></li>
+            <% } %>
+
+            <li class="nav-user">
+                <span class="user-info">
+                    <%= user.username %>
+                    <% if (user.role === 'admin') { %>
+                        <span class="badge admin-badge">Admin</span>
+                    <% } %>
+                </span>
+            </li>
+            <li>
+                <a href="/logout" class="nav-link btn-logout">Cerrar Sesión</a>
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= category.title %> - Votar</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="vote-container">
+                <div class="page-header">
+                    <h1><%= category.title %></h1>
+                    <% if (category.description) { %>
+                        <p class="category-description"><%= category.description %></p>
+                    <% } %>
+                </div>
+
+                <%- include('../partials/message') %>
+
+                <% if (hasVoted && !category.allowMultipleVotes) { %>
+                    <div class="alert alert-info">
+                        Ya has votado en esta categoría. No se permiten votos múltiples.
+                    </div>
+                    <a href="/categories" class="btn btn-secondary">Volver a Categorías</a>
+                <% } else { %>
+                    <form action="/categories/<%= category._id %>/vote" method="POST" class="vote-form">
+                        <div class="vote-options">
+                            <% category.options.forEach((option, index) => { %>
+                                <div class="vote-option">
+                                    <input
+                                        type="radio"
+                                        id="option-<%= index %>"
+                                        name="optionText"
+                                        value="<%= option.text %>"
+                                        required
+                                    >
+                                    <label for="option-<%= index %>">
+                                        <div class="option-content">
+                                            <span class="option-number"><%= index + 1 %></span>
+                                            <span class="option-text"><%= option.text %></span>
+                                            <span class="option-votes"><%= option.votes %> votos</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            <% }); %>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="/categories" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                Confirmar Voto
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="vote-info">
+                        <p>
+                            <strong>Total de votos:</strong>
+                            <%= category.options.reduce((sum, opt) => sum + opt.votes, 0) %>
+                        </p>
+                        <% if (category.allowMultipleVotes) { %>
+                            <p class="info-message">
+                                Puedes votar múltiples veces en diferentes opciones
+                            </p>
+                        <% } else { %>
+                            <p class="info-message">
+                                Solo puedes votar una vez en esta categoría
+                            </p>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/vote.js"></script>
+</body>
+</html>

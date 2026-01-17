@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revelación de Ganadores - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="revelation-header">
+                <div>
+                    <h1>Revelación de Ganadores</h1>
+                    <p>Descubre los ganadores de cada categoría</p>
+                </div>
+                <button class="btn-reset" onclick="location.reload()">Resetear</button>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (categories.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay categorías para mostrar</h3>
+                    <p>Crea categorías para ver sus resultados</p>
+                    <a href="/admin/categories/new" class="btn btn-primary">Crear Categoría</a>
+                </div>
+            <% } else { %>
+                <div class="categories-revelation-grid">
+                    <% categories.forEach(category => { %>
+                        <a href="/admin/categories/<%= category._id %>" class="category-card">
+                            <div class="category-card-icon">📧</div>
+                            <div class="category-card-title"><%= category.title %></div>
+                        </a>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

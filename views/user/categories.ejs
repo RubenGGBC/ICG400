@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - ICG400</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Categorías de Votación</h1>
+                <p>Selecciona una categoría para participar</p>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (categories.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay categorías activas</h3>
+                    <p>Vuelve más tarde para participar en las votaciones</p>
+                </div>
+            <% } else { %>
+                <div class="categories-grid">
+                    <% categories.forEach(category => { %>
+                        <div class="category-card">
+                            <h3><%= category.title %></h3>
+                            <p class="category-description"><%= category.description || 'Sin descripción' %></p>
+
+                            <div class="category-info">
+                                <span class="info-item">
+                                    <strong><%= category.options.length %></strong> opciones
+                                </span>
+                                <span class="info-item">
+                                    <strong><%= category.options.reduce((sum, opt) => sum + opt.votes, 0) %></strong> votos totales
+                                </span>
+                            </div>
+
+                            <div class="category-meta">
+                                <% if (category.allowMultipleVotes) { %>
+                                    <span class="badge badge-info">Votos múltiples permitidos</span>
+                                <% } %>
+                            </div>
+
+                            <% const hasVoted = votedCategories.includes(category._id.toString()); %>
+                            <% if (hasVoted) { %>
+                                <button class="btn btn-secondary btn-block" disabled>
+                                    Ya votaste en esta categoría
+                                </button>
+                            <% } else { %>
+                                <a href="/categories/<%= category._id %>" class="btn btn-primary btn-block">
+                                    Votar Ahora
+                                </a>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

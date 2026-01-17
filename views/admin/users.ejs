@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Usuarios - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Gestionar Usuarios</h1>
+                <a href="/admin" class="btn btn-secondary">← Volver al Dashboard</a>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (users.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay usuarios registrados</h3>
+                    <p>Los usuarios aparecerán aquí cuando se registren</p>
+                </div>
+            <% } else { %>
+                <div class="categories-table-container">
+                    <table class="categories-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Votos</th>
+                                <th>Registrado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(u => { %>
+                                <tr>
+                                    <td><strong><%= u.username %></strong></td>
+                                    <td><%= u.email %></td>
+                                    <td>
+                                        <% if (u.role === 'admin') { %>
+                                            <span class="badge admin-badge">Admin</span>
+                                        <% } else { %>
+                                            <span class="badge badge-secondary">Usuario</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= u.votedCategories.length %></td>
+                                    <td><%= new Date(u.createdAt).toLocaleDateString('es-ES') %></td>
+                                    <td>
+                                        <% if (u._id.toString() !== user.id) { %>
+                                            <% if (u.role === 'user') { %>
+                                                <form method="POST" action="/api/admin/users/<%= u._id %>/role" style="display: inline;">
+                                                    <input type="hidden" name="role" value="admin">
+                                                    <button type="submit" class="btn btn-sm btn-info" onclick="return confirm('¿Convertir a <%= u.username %> en administrador?')">
+                                                        Hacer Admin
+                                                    </button>
+                                                </form>
+                                            <% } else { %>
+                                                <form method="POST" action="/api/admin/users/<%= u._id %>/role" style="display: inline;">
+                                                    <input type="hidden" name="role" value="user">
+                                                    <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('¿Quitar privilegios de admin a <%= u.username %>?')">
+                                                        Quitar Admin
+                                                    </button>
+                                                </form>
+                                            <% } %>
+                                        <% } else { %>
+                                            <span class="badge badge-info">Tú</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section" style="margin-top: 2rem;">
+                    <h3>Estadísticas de Usuarios</h3>
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                                                        <div class="stat-info">
+                                <h3><%= users.length %></h3>
+                                <p>Total de Usuarios</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                                                        <div class="stat-info">
+                                <h3><%= users.filter(u => u.role === 'admin').length %></h3>
+                                <p>Administradores</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                                                        <div class="stat-info">
+                                <h3><%= users.filter(u => u.votedCategories.length > 0).length %></h3>
+                                <p>Usuarios Activos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

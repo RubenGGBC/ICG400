@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Categorías - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Gestionar Categorías</h1>
+                <a href="/admin/categories/new" class="btn btn-primary">Nueva Categoría</a>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (categories.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay categorías creadas</h3>
+                    <p>Crea tu primera categoría para empezar</p>
+                    <a href="/admin/categories/new" class="btn btn-primary">Crear Categoría</a>
+                </div>
+            <% } else { %>
+                <div class="categories-table-container">
+                    <table class="categories-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Opciones</th>
+                                <th>Total Votos</th>
+                                <th>Estado</th>
+                                <th>Creada</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% categories.forEach(category => { %>
+                                <tr>
+                                    <td>
+                                        <strong><%= category.title %></strong>
+                                        <% if (category.description) { %>
+                                            <br><small><%= category.description.substring(0, 50) %><%= category.description.length > 50 ? '...' : '' %></small>
+                                        <% } %>
+                                    </td>
+                                    <td><%= category.options.length %></td>
+                                    <td>
+                                        <strong><%= category.options.reduce((sum, opt) => sum + opt.votes, 0) %></strong>
+                                    </td>
+                                    <td>
+                                        <% if (category.isActive) { %>
+                                            <span class="badge badge-success">Activa</span>
+                                        <% } else { %>
+                                            <span class="badge badge-secondary">Inactiva</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(category.createdAt).toLocaleDateString('es-ES') %>
+                                    </td>
+                                    <td class="actions">
+                                        <a href="/admin/categories/<%= category._id %>" class="btn btn-sm btn-info" title="Ver Detalles">
+                                            Ver
+                                        </a>
+                                        <a href="/admin/categories/<%= category._id %>/edit" class="btn btn-sm btn-secondary" title="Editar">
+                                            Editar
+                                        </a>
+                                        <button
+                                            onclick="deleteCategory('<%= category._id %>', '<%= category.title %>')"
+                                            class="btn btn-sm btn-danger"
+                                            title="Eliminar"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
