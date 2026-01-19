@@ -64,11 +64,25 @@ router.post('/categories/:id/vote', protect, async (req, res) => {
     await category.save();
 
     // Actualizar usuario
-    await User.findByIdAndUpdate(req.user.id, {
-      $addToSet: { votedCategories: req.params.id }
-    });
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { $addToSet: { votedCategories: req.params.id } },
+      { new: true }
+    );
 
-    res.redirect('/dashboard?success=' + encodeURIComponent('Voto registrado exitosamente'));
+    // Buscar la siguiente categoría pendiente de votar (ordenadas por createdAt ascendente)
+    const allCategories = await Category.find({ isActive: true }).sort('createdAt');
+    const votedCategoryIds = updatedUser.votedCategories.map(id => id.toString());
+
+    const nextCategory = allCategories.find(cat => !votedCategoryIds.includes(cat._id.toString()));
+
+    if (nextCategory) {
+      // Redirigir a la siguiente categoría pendiente
+      res.redirect(`/categories/${nextCategory._id}?success=` + encodeURIComponent('¡Voto registrado! Continúa con la siguiente categoría.'));
+    } else {
+      // Todas las categorías votadas, redirigir a página de completado
+      res.redirect('/categories?success=' + encodeURIComponent('¡Felicidades! Has completado todas las votaciones.'));
+    }
   } catch (error) {
     console.error(error);
     res.redirect('/categories?error=' + encodeURIComponent('Error al procesar el voto'));

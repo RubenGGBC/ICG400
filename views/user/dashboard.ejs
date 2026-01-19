@@ -13,68 +13,55 @@
         <div class="container">
             <div class="page-header">
                 <h1>¡Bienvenido, <%= user.username %>!</h1>
-                <p>Aquí puedes ver tus votos y participar en las categorías activas</p>
+                <p>Participa en las votaciones de los Premios ICG400</p>
             </div>
 
             <%- include('../partials/message') %>
 
             <div class="dashboard-stats">
                 <div class="stat-card">
-                                        <div class="stat-info">
+                    <div class="stat-info">
                         <h3><%= myVotes.length %></h3>
                         <p>Votos Realizados</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                                        <div class="stat-info">
+                    <div class="stat-info">
                         <h3><%= activeCategories %></h3>
-                        <p>Categorías Activas</p>
+                        <p>Categorías Totales</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                                        <div class="stat-info">
+                    <div class="stat-info">
                         <h3><%= activeCategories - myVotes.length %></h3>
                         <p>Pendientes por Votar</p>
                     </div>
                 </div>
             </div>
 
-            <div class="section">
-                <div class="section-header">
-                    <h2>Categorías Disponibles</h2>
-                    <a href="/categories" class="btn btn-primary">Ver Todas</a>
-                </div>
-
-                <% if (categories.length === 0) { %>
-                    <div class="empty-state">
-                        <p>No hay categorías activas en este momento</p>
+            <!-- Sección de Iniciar Votación -->
+            <div class="start-voting-section">
+                <% if (activeCategories === 0) { %>
+                    <div class="voting-card voting-empty">
+                        <div class="voting-icon">📋</div>
+                        <h2>No hay votaciones activas</h2>
+                        <p>Vuelve más tarde para participar en las votaciones</p>
+                    </div>
+                <% } else if (myVotes.length >= activeCategories) { %>
+                    <div class="voting-card voting-complete">
+                        <div class="voting-icon">🎉</div>
+                        <h2>¡Has completado todas las votaciones!</h2>
+                        <p>Gracias por participar en los Premios ICG400</p>
+                        <a href="/categories" class="btn btn-secondary">Ver tu progreso</a>
                     </div>
                 <% } else { %>
-                    <div class="categories-grid">
-                        <% categories.slice(0, 6).forEach(category => { %>
-                            <div class="category-card">
-                                <h3><%= category.title %></h3>
-                                <p class="category-description"><%= category.description || 'Sin descripción' %></p>
-                                <div class="category-info">
-                                    <span class="info-item">
-                                        <strong><%= category.options.length %></strong> opciones
-                                    </span>
-                                    <span class="info-item">
-                                        <strong><%= category.options.reduce((sum, opt) => sum + opt.votes, 0) %></strong> votos
-                                    </span>
-                                </div>
-                                <% const hasVoted = myVotes.some(vote => vote.category._id.toString() === category._id.toString()); %>
-                                <% if (hasVoted) { %>
-                                    <button class="btn btn-secondary btn-block" disabled>
-                                        Ya votaste
-                                    </button>
-                                <% } else { %>
-                                    <a href="/categories/<%= category._id %>" class="btn btn-primary btn-block">
-                                        Votar Ahora
-                                    </a>
-                                <% } %>
-                            </div>
-                        <% }); %>
+                    <div class="voting-card voting-ready">
+                        <div class="voting-icon">🗳️</div>
+                        <h2>Votaciones Abiertas</h2>
+                        <p>Hay <strong><%= activeCategories - myVotes.length %></strong> categorías esperando tu voto</p>
+                        <a href="/categories" class="btn btn-primary btn-lg btn-start-voting">
+                            <span class="btn-icon">→</span> Iniciar Votación
+                        </a>
                     </div>
                 <% } %>
             </div>
@@ -85,7 +72,7 @@
                 <% if (myVotes.length === 0) { %>
                     <div class="empty-state">
                         <p>Aún no has votado en ninguna categoría</p>
-                        <a href="/categories" class="btn btn-primary">Explorar Categorías</a>
+                        <p class="text-muted">Inicia la votación para comenzar a participar</p>
                     </div>
                 <% } else { %>
                     <div class="votes-list">

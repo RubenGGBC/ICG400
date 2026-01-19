@@ -1283,3 +1283,948 @@ body {
     gap: 1rem;
   }
 }
+
+/* ==========================================
+   VOTING ROADMAP STYLES
+   ========================================== */
+
+.roadmap-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.roadmap-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.roadmap-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Barra de Progreso de Votación */
+.voting-progress-container {
+  background: var(--surface);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.voting-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.progress-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.progress-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.voting-progress-bar {
+  width: 100%;
+  height: 12px;
+  background: var(--background);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.voting-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+  border-radius: 6px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px var(--neon-pink);
+}
+
+.voting-progress-percent {
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+/* Banner de Completado */
+.voting-complete-banner {
+  background: linear-gradient(135deg, rgba(6, 255, 165, 0.1), rgba(0, 245, 255, 0.1));
+  border: 2px solid var(--success-color);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.complete-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.voting-complete-banner h2 {
+  color: var(--success-color);
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 15px rgba(6, 255, 165, 0.5);
+}
+
+.voting-complete-banner p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+/* Roadmap de Votación */
+.voting-roadmap {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.roadmap-item {
+  display: flex;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.roadmap-connector {
+  position: absolute;
+  left: -3rem;
+  top: 0;
+  bottom: 0;
+  width: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.roadmap-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  background: var(--border-color);
+  top: 0;
+  bottom: 0;
+}
+
+.roadmap-line.first {
+  top: 50%;
+}
+
+.roadmap-line.last {
+  bottom: 50%;
+}
+
+.roadmap-item.voted .roadmap-line {
+  background: var(--success-color);
+  box-shadow: 0 0 8px var(--success-color);
+}
+
+.roadmap-item.current .roadmap-line {
+  background: linear-gradient(180deg, var(--success-color) 0%, var(--neon-pink) 100%);
+}
+
+.roadmap-dot {
+  position: relative;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.roadmap-item.voted .roadmap-dot {
+  background: var(--success-color);
+  border-color: var(--success-color);
+  color: var(--background);
+  box-shadow: 0 0 15px var(--success-color);
+}
+
+.roadmap-item.current .roadmap-dot {
+  background: var(--neon-pink);
+  border-color: var(--neon-pink);
+  color: white;
+  box-shadow: 0 0 20px var(--neon-pink);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px var(--neon-pink); }
+  50% { transform: scale(1.1); box-shadow: 0 0 30px var(--neon-pink); }
+}
+
+.roadmap-item.pending .roadmap-dot {
+  opacity: 0.5;
+}
+
+.dot-check {
+  font-size: 1.2rem;
+}
+
+.dot-number {
+  font-size: 1rem;
+}
+
+/* Contenido del Roadmap */
+.roadmap-content {
+  flex: 1;
+}
+
+.roadmap-card {
+  background: var(--surface);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.roadmap-item.voted .roadmap-card {
+  border-color: var(--success-color);
+  opacity: 0.8;
+}
+
+.roadmap-item.current .roadmap-card {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 25px rgba(255, 0, 110, 0.3);
+}
+
+.roadmap-item.pending .roadmap-card {
+  opacity: 0.6;
+}
+
+.roadmap-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.roadmap-card-header h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.voted {
+  background: rgba(6, 255, 165, 0.2);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.status-badge.current {
+  background: rgba(255, 0, 110, 0.2);
+  color: var(--neon-pink);
+  border: 1px solid var(--neon-pink);
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.status-badge.pending {
+  background: rgba(184, 184, 209, 0.2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.roadmap-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.roadmap-info {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.roadmap-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-pulse {
+  animation: btn-pulse 2s infinite;
+}
+
+@keyframes btn-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.btn-locked {
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  font-size: 1rem;
+}
+
+/* Vote Page Progress Indicator */
+.vote-progress-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.back-to-roadmap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.back-to-roadmap:hover {
+  color: var(--neon-cyan);
+}
+
+.back-icon {
+  font-size: 1.2rem;
+}
+
+.progress-step {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.current-step {
+  color: var(--neon-pink);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.total-steps {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.category-number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+}
+
+.btn-vote-submit {
+  min-width: 200px;
+}
+
+/* ==========================================
+   CEREMONY REVELATION STYLES
+   ========================================== */
+
+.ceremony-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ceremony-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
+}
+
+.ceremony-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ceremony-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Barra de Progreso de Ceremonia */
+.ceremony-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.ceremony-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--background);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ceremony-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--neon-pink), var(--warning-color));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px var(--warning-color);
+}
+
+.ceremony-progress-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* Categorías de la Ceremonia */
+.ceremony-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ceremony-card {
+  background: var(--surface);
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.ceremony-card:hover:not(.revealed):not(.revealing) {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+}
+
+/* Estado: Sobre cerrado */
+.card-envelope {
+  display: block;
+}
+
+.envelope-front {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.envelope-number {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  border: 2px solid var(--neon-cyan);
+}
+
+.envelope-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 10px rgba(255, 190, 11, 0.5));
+}
+
+.envelope-title {
+  flex: 1;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-reveal {
+  white-space: nowrap;
+}
+
+/* Estado: Animación de apertura */
+.card-opening {
+  display: none;
+}
+
+.ceremony-card.revealing .card-envelope {
+  display: none;
+}
+
+.ceremony-card.revealing .card-opening {
+  display: block;
+}
+
+.opening-animation {
+  padding: 3rem;
+  text-align: center;
+}
+
+.envelope-opening {
+  position: relative;
+  display: inline-block;
+}
+
+.envelope-flap {
+  width: 100px;
+  height: 60px;
+  background: var(--warning-color);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation: flap-open 1s ease-out forwards;
+  transform-origin: bottom center;
+}
+
+@keyframes flap-open {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-180deg); }
+}
+
+.card-emerging {
+  margin-top: 1rem;
+}
+
+.suspense-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--warning-color);
+  animation: suspense-pulse 0.5s infinite alternate;
+  text-shadow: 0 0 20px rgba(255, 190, 11, 0.5);
+}
+
+@keyframes suspense-pulse {
+  0% { opacity: 0.5; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Estado: Resultado revelado */
+.card-revealed {
+  display: none;
+}
+
+.ceremony-card.revealed .card-envelope,
+.ceremony-card.revealed .card-opening {
+  display: none;
+}
+
+.ceremony-card.revealed .card-revealed {
+  display: block;
+  animation: reveal-in 0.5s ease-out;
+}
+
+@keyframes reveal-in {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.ceremony-card.revealed {
+  border-color: var(--success-color);
+  box-shadow: 0 0 25px rgba(6, 255, 165, 0.3);
+}
+
+.revealed-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.revealed-header .category-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--success-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--background);
+}
+
+.revealed-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+/* Showcase del Ganador */
+.winner-showcase {
+  padding: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 190, 11, 0.1), rgba(255, 0, 110, 0.1));
+}
+
+.winner-trophy {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  animation: trophy-bounce 1s ease infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 190, 11, 0.7));
+}
+
+@keyframes trophy-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.winner-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--warning-color);
+  text-shadow: 0 0 15px rgba(255, 190, 11, 0.5);
+  margin-bottom: 0.5rem;
+}
+
+.winner-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.winner-votes {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.winner-percent {
+  color: var(--success-color);
+  font-weight: 700;
+}
+
+/* Desglose de Resultados */
+.results-breakdown {
+  padding: 1.5rem;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-row.winner {
+  background: rgba(255, 190, 11, 0.1);
+}
+
+.result-position {
+  width: 30px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.result-name {
+  width: 100px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.result-bar-container {
+  flex: 1;
+  height: 8px;
+  background: var(--background);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.result-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+.result-row.winner .result-bar {
+  background: linear-gradient(90deg, var(--warning-color), var(--neon-pink));
+  box-shadow: 0 0 8px var(--warning-color);
+}
+
+.result-percent {
+  width: 50px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--neon-cyan);
+}
+
+.result-row.winner .result-percent {
+  color: var(--warning-color);
+}
+
+.result-votes {
+  width: 50px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Footer de la tarjeta */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--background);
+  border-top: 1px solid var(--border-color);
+}
+
+.total-votes {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Confeti */
+#confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -20px;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive para Roadmap y Ceremonia */
+@media (max-width: 768px) {
+  .voting-roadmap {
+    padding-left: 2.5rem;
+  }
+
+  .roadmap-connector {
+    left: -2.5rem;
+  }
+
+  .roadmap-dot {
+    width: 32px;
+    height: 32px;
+  }
+
+  .envelope-front {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .envelope-title {
+    flex: 100%;
+    order: 3;
+  }
+
+  .btn-reveal {
+    flex: 100%;
+    order: 4;
+  }
+
+  .vote-progress-indicator {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .winner-name {
+    font-size: 1.5rem;
+  }
+
+  .result-name {
+    width: 80px;
+    font-size: 0.9rem;
+  }
+
+  .ceremony-controls {
+    flex-direction: column;
+  }
+}
+
+/* ==========================================
+   START VOTING SECTION (DASHBOARD)
+   ========================================== */
+
+.start-voting-section {
+  margin-bottom: 2rem;
+}
+
+.voting-card {
+  background: var(--surface);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.voting-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.voting-card h2 {
+  font-size: 1.75rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.voting-card p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.voting-card p strong {
+  color: var(--neon-pink);
+  font-size: 1.3rem;
+}
+
+/* Estado: Listo para votar */
+.voting-card.voting-ready {
+  border-color: var(--neon-pink);
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.05), rgba(131, 56, 236, 0.05));
+}
+
+.voting-card.voting-ready:hover {
+  box-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
+  transform: translateY(-2px);
+}
+
+.voting-card.voting-ready .voting-icon {
+  filter: drop-shadow(0 0 15px rgba(255, 0, 110, 0.5));
+  animation: voting-icon-pulse 2s infinite;
+}
+
+@keyframes voting-icon-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Estado: Completado */
+.voting-card.voting-complete {
+  border-color: var(--success-color);
+  background: linear-gradient(135deg, rgba(6, 255, 165, 0.05), rgba(0, 245, 255, 0.05));
+}
+
+.voting-card.voting-complete .voting-icon {
+  filter: drop-shadow(0 0 15px rgba(6, 255, 165, 0.5));
+}
+
+.voting-card.voting-complete h2 {
+  color: var(--success-color);
+  text-shadow: 0 0 15px rgba(6, 255, 165, 0.3);
+}
+
+/* Estado: Sin votaciones */
+.voting-card.voting-empty {
+  opacity: 0.7;
+}
+
+/* Botón Iniciar Votación */
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-start-voting {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: btn-glow 2s infinite;
+}
+
+@keyframes btn-glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 110, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(255, 0, 110, 0.7); }
+}
+
+.btn-start-voting .btn-icon {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-start-voting:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .voting-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .voting-icon {
+    font-size: 3rem;
+  }
+
+  .voting-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .btn-lg {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}

@@ -12,14 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
       }
 
-      // Confirmación de voto
-      const optionText = selectedOption.parentElement.querySelector('.option-text').textContent;
-      const confirmed = confirm(`¿Estás seguro de votar por "${optionText}"?`);
-
-      if (!confirmed) {
-        e.preventDefault();
-        return false;
-      }
+      // Enviar directamente sin confirmación
     });
   }
 });

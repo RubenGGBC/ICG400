@@ -11,8 +11,19 @@
 
     <main class="main-content">
         <div class="container">
+            <!-- Indicador de Progreso -->
+            <div class="vote-progress-indicator">
+                <a href="/categories" class="back-to-roadmap">
+                    <span class="back-icon">←</span> Volver al roadmap
+                </a>
+                <div class="progress-step">
+                    Categoría <span class="current-step"><%= currentIndex %></span> de <span class="total-steps"><%= totalCategories %></span>
+                </div>
+            </div>
+
             <div class="vote-container">
                 <div class="page-header">
+                    <div class="category-number-badge"><%= currentIndex %></div>
                     <h1><%= category.title %></h1>
                     <% if (category.description) { %>
                         <p class="category-description"><%= category.description %></p>
@@ -25,7 +36,7 @@
                     <div class="alert alert-info">
                         Ya has votado en esta categoría. No se permiten votos múltiples.
                     </div>
-                    <a href="/categories" class="btn btn-secondary">Volver a Categorías</a>
+                    <a href="/categories" class="btn btn-secondary">Volver al Roadmap</a>
                 <% } else { %>
                     <form action="/categories/<%= category._id %>/vote" method="POST" class="vote-form">
                         <div class="vote-options">
@@ -51,8 +62,12 @@
 
                         <div class="form-actions">
                             <a href="/categories" class="btn btn-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">
-                                Confirmar Voto
+                            <button type="submit" class="btn btn-primary btn-vote-submit">
+                                <% if (currentIndex < totalCategories) { %>
+                                    Votar y Continuar →
+                                <% } else { %>
+                                    Confirmar Último Voto
+                                <% } %>
                             </button>
                         </div>
                     </form>

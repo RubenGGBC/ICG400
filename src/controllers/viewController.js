@@ -82,19 +82,20 @@ exports.userDashboard = async (req, res) => {
   }
 };
 
-// @desc    Renderizar lista de categorías
+// @desc    Renderizar lista de categorías (roadmap guiado)
 // @route   GET /categories
 // @access  Private
 exports.categoriesList = async (req, res) => {
   try {
+    // Ordenar por createdAt ascendente (más vieja primero, más nueva última)
     const categories = await Category.find({ isActive: true })
       .select('-options.voters')
-      .sort('-createdAt');
+      .sort('createdAt');
 
     const user = await User.findById(req.user.id);
     const votedCategories = user.votedCategories.map(id => id.toString());
 
-    res.render('user/categories', {
+    res.render('user/voting-roadmap', {
       user: req.user,
       categories,
       votedCategories,
@@ -131,10 +132,23 @@ exports.votePage = async (req, res) => {
       category: req.params.id
     });
 
+    // Obtener información de progreso
+    const allCategories = await Category.find({ isActive: true }).sort('createdAt');
+    const user = await User.findById(req.user.id);
+    const votedCategoryIds = user.votedCategories.map(id => id.toString());
+
+    // Encontrar la posición actual en el roadmap
+    const currentIndex = allCategories.findIndex(cat => cat._id.toString() === req.params.id);
+    const totalCategories = allCategories.length;
+    const votedCount = votedCategoryIds.length;
+
     res.render('user/vote', {
       user: req.user,
       category,
       hasVoted: !!hasVoted,
+      currentIndex: currentIndex + 1,
+      totalCategories,
+      votedCount,
       success: req.query.success,
       error: req.query.error
     });
@@ -257,16 +271,17 @@ exports.editCategoryForm = async (req, res) => {
   }
 };
 
-// @desc    Renderizar resultados
+// @desc    Renderizar resultados (ceremonia de revelación)
 // @route   GET /admin/results
 // @access  Private/Admin
 exports.resultsPage = async (req, res) => {
   try {
+    // Ordenar por createdAt ascendente (más vieja primero, más nueva última)
     const categories = await Category.find()
       .populate('options.voters', 'username email')
-      .sort('-createdAt');
+      .sort('createdAt');
 
-    res.render('admin/results', {
+    res.render('admin/results-ceremony', {
       user: req.user,
       categories,
       success: req.query.success,
