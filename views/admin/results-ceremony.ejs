@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceremonia de Revelación - ICG400</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="ceremony-header">
+                <h1>Ceremonia de Revelación</h1>
+                <p>Descubre los ganadores de cada categoría uno por uno</p>
+                <div class="ceremony-controls">
+                    <button id="btn-reset" class="btn btn-secondary">
+                        <span>↻</span> Reiniciar
+                    </button>
+                    <button id="btn-reveal-all" class="btn btn-info">
+                        Revelar Todo
+                    </button>
+                </div>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (categories.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay categorías para mostrar</h3>
+                    <p>Crea categorías para ver sus resultados</p>
+                    <a href="/admin/categories/new" class="btn btn-primary">Crear Categoría</a>
+                </div>
+            <% } else { %>
+                <!-- Barra de Progreso de Revelación -->
+                <div class="ceremony-progress">
+                    <div class="ceremony-progress-bar">
+                        <div class="ceremony-progress-fill" id="ceremony-progress-fill"></div>
+                    </div>
+                    <span class="ceremony-progress-text">
+                        <span id="revealed-count">0</span> de <%= categories.length %> reveladas
+                    </span>
+                </div>
+
+                <!-- Lista de Categorías para Revelar -->
+                <div class="ceremony-categories">
+                    <% categories.forEach((category, index) => {
+                        // Calcular ganador
+                        const sortedOptions = [...category.options].sort((a, b) => b.votes - a.votes);
+                        const winner = sortedOptions[0];
+                        const totalVotes = category.options.reduce((sum, opt) => sum + opt.votes, 0);
+                        const winnerPercent = totalVotes > 0 ? Math.round((winner.votes / totalVotes) * 100) : 0;
+                    %>
+                        <div class="ceremony-card" data-index="<%= index %>" data-category-id="<%= category._id %>">
+                            <!-- Estado: Sobre cerrado (antes de revelar) -->
+                            <div class="card-envelope">
+                                <div class="envelope-front">
+                                    <div class="envelope-number"><%= index + 1 %></div>
+                                    <div class="envelope-icon">📧</div>
+                                    <div class="envelope-title"><%= category.title %></div>
+                                    <button class="btn btn-primary btn-reveal" onclick="revealCard(<%= index %>)">
+                                        Revelar Ganador
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Estado: Animación de apertura -->
+                            <div class="card-opening">
+                                <div class="opening-animation">
+                                    <div class="envelope-opening">
+                                        <div class="envelope-flap"></div>
+                                        <div class="card-emerging">
+                                            <div class="suspense-text">Y el ganador es...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Estado: Resultado revelado -->
+                            <div class="card-revealed">
+                                <div class="revealed-header">
+                                    <div class="category-badge"><%= index + 1 %></div>
+                                    <h3><%= category.title %></h3>
+                                </div>
+
+                                <div class="winner-showcase">
+                                    <div class="winner-trophy">🏆</div>
+                                    <div class="winner-name"><%= winner.text %></div>
+                                    <div class="winner-stats">
+                                        <span class="winner-votes"><%= winner.votes %> votos</span>
+                                        <span class="winner-percent"><%= winnerPercent %>%</span>
+                                    </div>
+                                </div>
+
+                                <div class="results-breakdown">
+                                    <% sortedOptions.forEach((option, optIndex) => {
+                                        const percent = totalVotes > 0 ? Math.round((option.votes / totalVotes) * 100) : 0;
+                                    %>
+                                        <div class="result-row <%= optIndex === 0 ? 'winner' : '' %>">
+                                            <span class="result-position">
+                                                <% if (optIndex === 0) { %>🥇<% } else if (optIndex === 1) { %>🥈<% } else if (optIndex === 2) { %>🥉<% } else { %><%= optIndex + 1 %><% } %>
+                                            </span>
+                                            <span class="result-name"><%= option.text %></span>
+                                            <div class="result-bar-container">
+                                                <div class="result-bar" style="width: 0%" data-width="<%= percent %>%"></div>
+                                            </div>
+                                            <span class="result-percent"><%= percent %>%</span>
+                                            <span class="result-votes">(<%= option.votes %>)</span>
+                                        </div>
+                                    <% }); %>
+                                </div>
+
+                                <div class="card-footer">
+                                    <span class="total-votes">Total: <%= totalVotes %> votos</span>
+                                    <a href="/admin/categories/<%= category._id %>" class="btn btn-sm btn-secondary">
+                                        Ver Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- Confeti container -->
+                <div id="confetti-container"></div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script>
+        const totalCategories = <%= categories.length %>;
+        let revealedCount = 0;
+
+        function updateProgress() {
+            const progressFill = document.getElementById('ceremony-progress-fill');
+            const revealedCountEl = document.getElementById('revealed-count');
+            const percent = (revealedCount / totalCategories) * 100;
+            progressFill.style.width = percent + '%';
+            revealedCountEl.textContent = revealedCount;
+        }
+
+        function revealCard(index) {
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (card.classList.contains('revealed') || card.classList.contains('revealing')) return;
+
+            card.classList.add('revealing');
+
+            // Fase 1: Animación de apertura
+            setTimeout(() => {
+                card.classList.add('opening');
+            }, 100);
+
+            // Fase 2: Mostrar resultado
+            setTimeout(() => {
+                card.classList.remove('revealing', 'opening');
+                card.classList.add('revealed');
+                revealedCount++;
+                updateProgress();
+
+                // Animar las barras de progreso
+                const bars = card.querySelectorAll('.result-bar');
+                bars.forEach(bar => {
+                    const width = bar.dataset.width;
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+
+                // Confeti si es la última
+                if (revealedCount === totalCategories) {
+                    triggerConfetti();
+                }
+            }, 2500);
+        }
+
+        function revealAll() {
+            const cards = document.querySelectorAll('.ceremony-card:not(.revealed)');
+            cards.forEach((card, i) => {
+                setTimeout(() => {
+                    const index = parseInt(card.dataset.index);
+                    revealCard(index);
+                }, i * 500);
+            });
+        }
+
+        function resetCeremony() {
+            const cards = document.querySelectorAll('.ceremony-card');
+            cards.forEach(card => {
+                card.classList.remove('revealing', 'opening', 'revealed');
+                const bars = card.querySelectorAll('.result-bar');
+                bars.forEach(bar => {
+                    bar.style.width = '0%';
+                });
+            });
+            revealedCount = 0;
+            updateProgress();
+            document.getElementById('confetti-container').innerHTML = '';
+        }
+
+        function triggerConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#ff006e', '#00f5ff', '#8338ec', '#ffbe0b', '#06ffa5'];
+
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        document.getElementById('btn-reset').addEventListener('click', resetCeremony);
+        document.getElementById('btn-reveal-all').addEventListener('click', revealAll);
+    </script>
+</body>
+</html>

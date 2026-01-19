@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votaciones - ICG400</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="roadmap-header">
+                <h1>Votaciones ICG400</h1>
+                <p>Vota en cada categoría para completar tu participación</p>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <%
+                const totalCategories = categories.length;
+                const votedCount = categories.filter(cat => votedCategories.includes(cat._id.toString())).length;
+                const progressPercent = totalCategories > 0 ? Math.round((votedCount / totalCategories) * 100) : 0;
+                const allVoted = votedCount === totalCategories && totalCategories > 0;
+            %>
+
+            <!-- Barra de Progreso -->
+            <div class="voting-progress-container">
+                <div class="voting-progress-header">
+                    <span class="progress-label">Tu progreso</span>
+                    <span class="progress-count"><%= votedCount %> de <%= totalCategories %> categorías</span>
+                </div>
+                <div class="voting-progress-bar">
+                    <div class="voting-progress-fill" style="width: <%= progressPercent %>%"></div>
+                </div>
+                <div class="voting-progress-percent"><%= progressPercent %>% completado</div>
+            </div>
+
+            <% if (allVoted) { %>
+                <!-- Mensaje de Completado -->
+                <div class="voting-complete-banner">
+                    <div class="complete-icon">🎉</div>
+                    <h2>¡Has completado todas las votaciones!</h2>
+                    <p>Gracias por participar en ICG400. Los resultados se revelarán pronto.</p>
+                    <a href="/dashboard" class="btn btn-primary">Volver al Dashboard</a>
+                </div>
+            <% } %>
+
+            <% if (categories.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay categorías activas</h3>
+                    <p>Vuelve más tarde para participar en las votaciones</p>
+                </div>
+            <% } else { %>
+                <!-- Roadmap de Categorías -->
+                <div class="voting-roadmap">
+                    <% categories.forEach((category, index) => {
+                        const hasVoted = votedCategories.includes(category._id.toString());
+                        const isNext = !hasVoted && categories.slice(0, index).every(cat => votedCategories.includes(cat._id.toString()));
+                        const isPending = !hasVoted && !isNext;
+                    %>
+                        <div class="roadmap-item <%= hasVoted ? 'voted' : '' %> <%= isNext ? 'current' : '' %> <%= isPending ? 'pending' : '' %>">
+                            <div class="roadmap-connector">
+                                <div class="roadmap-line <%= index === 0 ? 'first' : '' %> <%= index === categories.length - 1 ? 'last' : '' %>"></div>
+                                <div class="roadmap-dot">
+                                    <% if (hasVoted) { %>
+                                        <span class="dot-check">✓</span>
+                                    <% } else { %>
+                                        <span class="dot-number"><%= index + 1 %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="roadmap-content">
+                                <div class="roadmap-card">
+                                    <div class="roadmap-card-header">
+                                        <h3><%= category.title %></h3>
+                                        <% if (hasVoted) { %>
+                                            <span class="status-badge voted">Votado</span>
+                                        <% } else if (isNext) { %>
+                                            <span class="status-badge current">Siguiente</span>
+                                        <% } else { %>
+                                            <span class="status-badge pending">Pendiente</span>
+                                        <% } %>
+                                    </div>
+
+                                    <% if (category.description) { %>
+                                        <p class="roadmap-description"><%= category.description %></p>
+                                    <% } %>
+
+                                    <div class="roadmap-info">
+                                        <span class="info-item">
+                                            <strong><%= category.options.reduce((sum, opt) => sum + opt.votes, 0) %></strong> votos totales
+                                        </span>
+                                        <% if (category.allowMultipleVotes) { %>
+                                            <span class="badge badge-info">Votos múltiples</span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="roadmap-actions">
+                                        <% if (hasVoted) { %>
+                                            <span class="btn btn-secondary btn-block" disabled>
+                                                <span class="btn-icon">✓</span> Ya has votado
+                                            </span>
+                                        <% } else if (isNext) { %>
+                                            <a href="/categories/<%= category._id %>" class="btn btn-primary btn-block btn-pulse">
+                                                <span class="btn-icon">→</span> Votar Ahora
+                                            </a>
+                                        <% } else { %>
+                                            <span class="btn btn-secondary btn-block btn-locked" disabled>
+                                                <span class="btn-icon">🔒</span> Completa las anteriores
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
