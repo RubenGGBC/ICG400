@@ -26,7 +26,8 @@ router.post('/admin/categories/create', protect, authorize('admin'), async (req,
       options: formattedOptions,
       allowMultipleVotes: allowMultipleVotes === 'on',
       isActive: isActive === 'on',
-      createdBy: req.user.id
+      createdBy: req.user._id,
+      proposedByUsername: null
     });
 
     res.redirect('/admin/categories?success=' + encodeURIComponent('Categoría creada exitosamente'));

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proponer Incógnita - ICG400</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Proponer Nueva Incógnita</h1>
+                <a href="/my-proposals" class="btn btn-secondary">← Mis Propuestas</a>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (!proposalPeriod.isActive) { %>
+                <div class="proposal-closed-banner">
+                    <div class="banner-icon">🔒</div>
+                    <% if (proposalPeriod.hasNotStarted) { %>
+                        <h2>El período de propuestas aún no ha comenzado</h2>
+                        <p>Podrás proponer incógnitas a partir del <strong>19 de enero de 2026</strong></p>
+                    <% } else { %>
+                        <h2>El período de propuestas ha terminado</h2>
+                        <p>El plazo para proponer incógnitas finalizó el <strong>25 de enero de 2026</strong></p>
+                    <% } %>
+                    <a href="/dashboard" class="btn btn-primary">Volver al Dashboard</a>
+                </div>
+            <% } else { %>
+                <div class="proposal-info-banner">
+                    <div class="banner-icon">💡</div>
+                    <div class="banner-content">
+                        <h3>¡Propón tu propia incógnita!</h3>
+                        <p>Tienes hasta el <strong>25 de enero</strong> para enviar tus propuestas.</p>
+                        <p>Quedan <strong><%= proposalPeriod.daysRemaining %></strong> días para proponer.</p>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <form action="/proposals/create" method="POST" class="category-form">
+                        <div class="form-group">
+                            <label for="title">Título de la Incógnita *</label>
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                required
+                                placeholder="Ej: El más gracioso del grupo"
+                                maxlength="100"
+                            >
+                            <span class="form-hint">Máximo 100 caracteres. Sé creativo pero respetuoso.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Descripción (opcional)</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="3"
+                                placeholder="Explica brevemente de qué trata esta incógnita..."
+                                maxlength="300"
+                            ></textarea>
+                            <span class="form-hint">Máximo 300 caracteres.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Opciones de Votación</label>
+                            <div class="fixed-options-info">
+                                <p class="form-hint">Las opciones serán las mismas para todas las incógnitas:</p>
+                                <ul class="fixed-options-list">
+                                    <li>Gringo</li>
+                                    <li>Marco</li>
+                                    <li>Alex</li>
+                                    <li>Joak</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="/dashboard" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                Enviar Propuesta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -13,7 +13,7 @@
         <div class="container">
             <div class="ceremony-header">
                 <h1>Ceremonia de Revelación</h1>
-                <p>Descubre los ganadores de cada categoría uno por uno</p>
+                <p>Descubre los ganadores de cada incógnita uno por uno</p>
                 <div class="ceremony-controls">
                     <button id="btn-reset" class="btn btn-secondary">
                         <span>↻</span> Reiniciar
@@ -28,9 +28,9 @@
 
             <% if (categories.length === 0) { %>
                 <div class="empty-state">
-                    <h3>No hay categorías para mostrar</h3>
-                    <p>Crea categorías para ver sus resultados</p>
-                    <a href="/admin/categories/new" class="btn btn-primary">Crear Categoría</a>
+                    <h3>No hay incógnitas para mostrar</h3>
+                    <p>Crea incógnitas para ver sus resultados</p>
+                    <a href="/admin/categories/new" class="btn btn-primary">Crear Incógnita</a>
                 </div>
             <% } else { %>
                 <!-- Barra de Progreso de Revelación -->
@@ -82,6 +82,11 @@
                                 <div class="revealed-header">
                                     <div class="category-badge"><%= index + 1 %></div>
                                     <h3><%= category.title %></h3>
+                                    <% if (category.isUserProposed && category.proposedByUsername) { %>
+                                        <p class="proposed-by-footer">
+                                            Propuesta por: <strong><%= category.proposedByUsername %></strong>
+                                        </p>
+                                    <% } %>
                                 </div>
 
                                 <div class="winner-showcase">

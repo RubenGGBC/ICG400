@@ -29,7 +29,6 @@
                         <thead>
                             <tr>
                                 <th>Usuario</th>
-                                <th>Email</th>
                                 <th>Rol</th>
                                 <th>Votos</th>
                                 <th>Registrado</th>
@@ -40,7 +39,6 @@
                             <% users.forEach(u => { %>
                                 <tr>
                                     <td><strong><%= u.username %></strong></td>
-                                    <td><%= u.email %></td>
                                     <td>
                                         <% if (u.role === 'admin') { %>
                                             <span class="badge admin-badge">Admin</span>
@@ -81,19 +79,19 @@
                     <h3>Estadísticas de Usuarios</h3>
                     <div class="dashboard-stats">
                         <div class="stat-card">
-                                                        <div class="stat-info">
+                                                    <div class="stat-info">
                                 <h3><%= users.length %></h3>
                                 <p>Total de Usuarios</p>
                             </div>
                         </div>
                         <div class="stat-card">
-                                                        <div class="stat-info">
+                                                    <div class="stat-info">
                                 <h3><%= users.filter(u => u.role === 'admin').length %></h3>
                                 <p>Administradores</p>
                             </div>
                         </div>
                         <div class="stat-card">
-                                                        <div class="stat-info">
+                                                    <div class="stat-info">
                                 <h3><%= users.filter(u => u.votedCategories.length > 0).length %></h3>
                                 <p>Usuarios Activos</p>
                             </div>

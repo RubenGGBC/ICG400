@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Categorías - Admin</title>
+    <title>Gestionar Incógnitas - Admin</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -12,17 +12,17 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>Gestionar Categorías</h1>
-                <a href="/admin/categories/new" class="btn btn-primary">Nueva Categoría</a>
+                <h1>Gestionar Incógnitas</h1>
+                <a href="/admin/categories/new" class="btn btn-primary">Nueva Incógnita</a>
             </div>
 
             <%- include('../partials/message') %>
 
             <% if (categories.length === 0) { %>
                 <div class="empty-state">
-                    <h3>No hay categorías creadas</h3>
-                    <p>Crea tu primera categoría para empezar</p>
-                    <a href="/admin/categories/new" class="btn btn-primary">Crear Categoría</a>
+                    <h3>No hay incógnitas creadas</h3>
+                    <p>Crea tu primera incógnita para empezar</p>
+                    <a href="/admin/categories/new" class="btn btn-primary">Crear Incógnita</a>
                 </div>
             <% } else { %>
                 <div class="categories-table-container">

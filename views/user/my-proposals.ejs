@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Propuestas - ICG400</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Mis Propuestas</h1>
+                <% if (proposalPeriod.isActive) { %>
+                    <a href="/proposals/new" class="btn btn-primary">+ Nueva Propuesta</a>
+                <% } %>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (!proposalPeriod.isActive && proposalPeriod.hasNotStarted) { %>
+                <div class="alert alert-info">
+                    El período de propuestas comenzará el <strong>19 de enero de 2026</strong>.
+                </div>
+            <% } else if (!proposalPeriod.isActive && proposalPeriod.hasEnded) { %>
+                <div class="alert alert-warning">
+                    El período de propuestas ha terminado. Ya no se pueden enviar nuevas propuestas.
+                </div>
+            <% } else { %>
+                <div class="alert alert-success">
+                    <strong>Período activo:</strong> Quedan <%= proposalPeriod.daysRemaining %> días para proponer incógnitas.
+                </div>
+            <% } %>
+
+            <% if (proposals.length === 0) { %>
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>No has enviado ninguna propuesta</h3>
+                    <% if (proposalPeriod.isActive) { %>
+                        <p>¡Sé el primero en proponer una incógnita para los premios!</p>
+                        <a href="/proposals/new" class="btn btn-primary">Proponer Incógnita</a>
+                    <% } else if (proposalPeriod.hasNotStarted) { %>
+                        <p>Podrás proponer incógnitas a partir del 19 de enero.</p>
+                    <% } else { %>
+                        <p>El período de propuestas ha terminado.</p>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="proposals-list">
+                    <% proposals.forEach(proposal => { %>
+                        <div class="proposal-card status-<%= proposal.status %>">
+                            <div class="proposal-header">
+                                <h3><%= proposal.title %></h3>
+                                <span class="status-badge <%= proposal.status %>">
+                                    <% if (proposal.status === 'pending') { %>
+                                        ⏳ Pendiente
+                                    <% } else if (proposal.status === 'approved') { %>
+                                        ✓ Aprobada
+                                    <% } else { %>
+                                        ✕ Rechazada
+                                    <% } %>
+                                </span>
+                            </div>
+
+                            <% if (proposal.description) { %>
+                                <p class="proposal-description"><%= proposal.description %></p>
+                            <% } %>
+
+                            <div class="proposal-meta">
+                                <span class="meta-item">
+                                    Enviada el <%= new Date(proposal.createdAt).toLocaleDateString('es-ES', {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                    }) %>
+                                </span>
+                            </div>
+
+                            <% if (proposal.status === 'rejected' && proposal.rejectionReason) { %>
+                                <div class="rejection-reason">
+                                    <strong>Motivo del rechazo:</strong> <%= proposal.rejectionReason %>
+                                </div>
+                            <% } %>
+
+                            <% if (proposal.status === 'approved') { %>
+                                <div class="approval-notice">
+                                    ¡Tu incógnita ha sido aprobada y estará disponible para votar!
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

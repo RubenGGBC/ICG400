@@ -6,8 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Validación del registro
   if (registerForm) {
     registerForm.addEventListener('submit', function(e) {
+      const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (username.length < 3) {
+        e.preventDefault();
+        alert('El nombre de usuario debe tener al menos 3 caracteres');
+        return false;
+      }
 
       if (password !== confirmPassword) {
         e.preventDefault();
@@ -26,10 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Validación del login
   if (loginForm) {
     loginForm.addEventListener('submit', function(e) {
-      const email = document.getElementById('email').value;
+      const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-      if (!email || !password) {
+      if (!username || !password) {
         e.preventDefault();
         alert('Por favor completa todos los campos');
         return false;

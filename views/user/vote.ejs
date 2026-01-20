@@ -17,7 +17,7 @@
                     <span class="back-icon">←</span> Volver al roadmap
                 </a>
                 <div class="progress-step">
-                    Categoría <span class="current-step"><%= currentIndex %></span> de <span class="total-steps"><%= totalCategories %></span>
+                    Incógnita <span class="current-step"><%= currentIndex %></span> de <span class="total-steps"><%= totalCategories %></span>
                 </div>
             </div>
 
@@ -28,13 +28,18 @@
                     <% if (category.description) { %>
                         <p class="category-description"><%= category.description %></p>
                     <% } %>
+                    <% if (category.isUserProposed && category.proposedByUsername) { %>
+                        <p class="proposed-by-header">
+                            Propuesta por: <strong><%= category.proposedByUsername %></strong>
+                        </p>
+                    <% } %>
                 </div>
 
                 <%- include('../partials/message') %>
 
                 <% if (hasVoted && !category.allowMultipleVotes) { %>
                     <div class="alert alert-info">
-                        Ya has votado en esta categoría. No se permiten votos múltiples.
+                        Ya has votado en esta incógnita. No se permiten votos múltiples.
                     </div>
                     <a href="/categories" class="btn btn-secondary">Volver al Roadmap</a>
                 <% } else { %>
@@ -83,7 +88,7 @@
                             </p>
                         <% } else { %>
                             <p class="info-message">
-                                Solo puedes votar una vez en esta categoría
+                                Solo puedes votar una vez en esta incógnita
                             </p>
                         <% } %>
                     </div>

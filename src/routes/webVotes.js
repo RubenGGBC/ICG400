@@ -4,22 +4,29 @@ const Category = require('../models/Category');
 const Vote = require('../models/Vote');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
+const { isProposalPeriod } = require('../config/dates');
 
 // @desc    Procesar voto desde formulario
 // @route   POST /categories/:id/vote
 // @access  Private
 router.post('/categories/:id/vote', protect, async (req, res) => {
   try {
+    // Verificar que estamos dentro del período de votación
+    if (!isProposalPeriod()) {
+      return res.redirect('/categories?error=' + encodeURIComponent('El período de votación ha cerrado. Los resultados estarán disponibles pronto.'));
+    }
+
     const { optionText } = req.body;
 
     const category = await Category.findById(req.params.id);
 
     if (!category) {
-      return res.redirect('/categories?error=' + encodeURIComponent('Categoría no encontrada'));
+      return res.redirect('/categories?error=' + encodeURIComponent('Incógnita no encontrada'));
     }
 
-    if (!category.isActive) {
-      return res.redirect('/categories?error=' + encodeURIComponent('Esta categoría no está activa'));
+    // Solo permitir votar en categorías aprobadas o categorías normales de admin
+    if (!category.isActive || (category.isUserProposed && category.status !== 'approved')) {
+      return res.redirect('/categories?error=' + encodeURIComponent('Esta incógnita no está disponible para votar'));
     }
 
     // Buscar la opción por texto
@@ -31,7 +38,7 @@ router.post('/categories/:id/vote', protect, async (req, res) => {
 
     // Verificar si ya votó
     const existingVote = await Vote.findOne({
-      user: req.user.id,
+      user: req.user._id,
       category: req.params.id
     });
 
@@ -41,7 +48,7 @@ router.post('/categories/:id/vote', protect, async (req, res) => {
 
     if (existingVote && category.allowMultipleVotes) {
       const alreadyVotedThisOption = await Vote.findOne({
-        user: req.user.id,
+        user: req.user._id,
         category: req.params.id,
         option: optionText
       });
@@ -53,25 +60,32 @@ router.post('/categories/:id/vote', protect, async (req, res) => {
 
     // Registrar el voto
     await Vote.create({
-      user: req.user.id,
+      user: req.user._id,
       category: req.params.id,
       option: optionText
     });
 
     // Actualizar contador
     option.votes += 1;
-    option.voters.push(req.user.id);
+    option.voters.push(req.user._id);
     await category.save();
 
     // Actualizar usuario
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { $addToSet: { votedCategories: req.params.id } },
       { new: true }
     );
 
     // Buscar la siguiente categoría pendiente de votar (ordenadas por createdAt ascendente)
-    const allCategories = await Category.find({ isActive: true }).sort('createdAt');
+    // Solo categorías activas y aprobadas
+    const allCategories = await Category.find({ 
+      isActive: true, 
+      $or: [
+        { status: 'approved' },
+        { isUserProposed: false }
+      ]
+    }).sort('createdAt');
     const votedCategoryIds = updatedUser.votedCategories.map(id => id.toString());
 
     const nextCategory = allCategories.find(cat => !votedCategoryIds.includes(cat._id.toString()));

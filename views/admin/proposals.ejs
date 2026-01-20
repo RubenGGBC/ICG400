@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Propuestas - Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Propuestas de Usuarios</h1>
+                <a href="/admin" class="btn btn-secondary">← Dashboard</a>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <!-- Info del período -->
+            <div class="period-info-box">
+                <% if (proposalPeriod.isActive) { %>
+                    <span class="badge badge-success">Período Activo</span>
+                    <span>Quedan <%= proposalPeriod.daysRemaining %> días para proponer</span>
+                <% } else if (proposalPeriod.hasEnded) { %>
+                    <span class="badge badge-secondary">Período Finalizado</span>
+                    <span>Las propuestas han cerrado</span>
+                <% } else { %>
+                    <span class="badge badge-info">Próximamente</span>
+                    <span>Inicia el 19 de enero</span>
+                <% } %>
+            </div>
+
+            <!-- Tabs para filtrar -->
+            <div class="proposals-tabs">
+                <a href="/admin/proposals?filter=pending" class="tab <%= filter === 'pending' ? 'active' : '' %>">
+                    Pendientes <span class="count"><%= counts.pending %></span>
+                </a>
+                <a href="/admin/proposals?filter=approved" class="tab <%= filter === 'approved' ? 'active' : '' %>">
+                    Aprobadas <span class="count"><%= counts.approved %></span>
+                </a>
+                <a href="/admin/proposals?filter=rejected" class="tab <%= filter === 'rejected' ? 'active' : '' %>">
+                    Rechazadas <span class="count"><%= counts.rejected %></span>
+                </a>
+                <a href="/admin/proposals?filter=all" class="tab <%= filter === 'all' ? 'active' : '' %>">
+                    Todas <span class="count"><%= counts.total %></span>
+                </a>
+            </div>
+
+            <% if (proposals.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay propuestas <%= filter !== 'all' ? filter === 'pending' ? 'pendientes' : filter === 'approved' ? 'aprobadas' : 'rechazadas' : '' %></h3>
+                    <p>Las propuestas de los usuarios aparecerán aquí.</p>
+                </div>
+            <% } else { %>
+                <div class="admin-proposals-list">
+                    <% proposals.forEach(proposal => { %>
+                        <div class="admin-proposal-card status-<%= proposal.status %>">
+                            <div class="proposal-main">
+                                <div class="proposal-header">
+                                    <h3><%= proposal.title %></h3>
+                                    <span class="status-badge <%= proposal.status %>">
+                                        <% if (proposal.status === 'pending') { %>
+                                            ⏳ Pendiente
+                                        <% } else if (proposal.status === 'approved') { %>
+                                            ✓ Aprobada
+                                        <% } else { %>
+                                            ✕ Rechazada
+                                        <% } %>
+                                    </span>
+                                </div>
+
+                                <% if (proposal.description) { %>
+                                    <p class="proposal-description"><%= proposal.description %></p>
+                                <% } %>
+
+                                <div class="proposal-meta">
+                                    <span class="meta-item">
+                                        <strong>Propuesto por:</strong> <%= proposal.proposedByUsername %>
+                                    </span>
+                                    <span class="meta-item">
+                                        <strong>Fecha:</strong> <%= new Date(proposal.createdAt).toLocaleDateString('es-ES', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) %>
+                                    </span>
+                                </div>
+
+                                <% if (proposal.status === 'rejected' && proposal.rejectionReason) { %>
+                                    <div class="rejection-reason">
+                                        <strong>Motivo:</strong> <%= proposal.rejectionReason %>
+                                    </div>
+                                <% } %>
+                            </div>
+
+                            <% if (proposal.status === 'pending') { %>
+                                <div class="proposal-actions">
+                                    <form action="/admin/proposals/<%= proposal._id %>/approve" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            ✓ Aprobar
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="showRejectModal('<%= proposal._id %>', '<%= proposal.title %>')">
+                                        ✕ Rechazar
+                                    </button>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Modal de rechazo -->
+    <div id="reject-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Rechazar Propuesta</h3>
+                <button type="button" class="modal-close" onclick="hideRejectModal()">×</button>
+            </div>
+            <form id="reject-form" method="POST">
+                <div class="modal-body">
+                    <p>Propuesta: <strong id="reject-title"></strong></p>
+                    <div class="form-group">
+                        <label for="rejectionReason">Motivo del rechazo (opcional)</label>
+                        <textarea
+                            id="rejectionReason"
+                            name="rejectionReason"
+                            rows="3"
+                            placeholder="Explica brevemente por qué se rechaza esta propuesta..."
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="hideRejectModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar Rechazo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script>
+        function showRejectModal(id, title) {
+            document.getElementById('reject-form').action = '/admin/proposals/' + id + '/reject';
+            document.getElementById('reject-title').textContent = title;
+            document.getElementById('reject-modal').style.display = 'flex';
+        }
+
+        function hideRejectModal() {
+            document.getElementById('reject-modal').style.display = 'none';
+            document.getElementById('rejectionReason').value = '';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('reject-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideRejectModal();
+            }
+        });
+    </script>
+</body>
+</html>

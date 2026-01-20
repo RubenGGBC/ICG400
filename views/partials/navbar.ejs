@@ -10,12 +10,14 @@
         <ul class="nav-menu">
             <% if (user.role === 'admin') { %>
                 <li><a href="/admin" class="nav-link">Dashboard</a></li>
-                <li><a href="/admin/categories" class="nav-link">Gestionar Categorías</a></li>
+                <li><a href="/admin/categories" class="nav-link">Gestionar Incógnitas</a></li>
+                <li><a href="/admin/proposals" class="nav-link">Propuestas</a></li>
                 <li><a href="/admin/results" class="nav-link">Resultados</a></li>
                 <li><a href="/admin/users" class="nav-link">Usuarios</a></li>
             <% } else { %>
                 <li><a href="/dashboard" class="nav-link">Mi Dashboard</a></li>
                 <li><a href="/categories" class="nav-link">Votar</a></li>
+                <li><a href="/my-proposals" class="nav-link">Mis Propuestas</a></li>
             <% } %>
 
             <li class="nav-user">

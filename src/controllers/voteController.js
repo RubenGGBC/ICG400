@@ -1,13 +1,20 @@
 const Category = require('../models/Category');
 const Vote = require('../models/Vote');
 const User = require('../models/User');
+const { isProposalPeriod } = require('../config/dates');
 
 // @desc    Obtener todas las categorías activas
 // @route   GET /api/votes/categories
 // @access  Private
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({ isActive: true })
+    const categories = await Category.find({ 
+      isActive: true,
+      $or: [
+        { status: 'approved' },
+        { isUserProposed: false }
+      ]
+    })
       .select('-options.voters')
       .sort('-createdAt');
 
@@ -57,6 +64,14 @@ exports.getCategory = async (req, res, next) => {
 // @access  Private
 exports.vote = async (req, res, next) => {
   try {
+    // Verificar que estamos dentro del período de votación
+    if (!isProposalPeriod()) {
+      return res.status(400).json({
+        success: false,
+        message: 'El período de votación ha cerrado. Los resultados estarán disponibles pronto.'
+      });
+    }
+
     const { optionText } = req.body;
 
     // Verificar que la categoría existe
@@ -76,6 +91,14 @@ exports.vote = async (req, res, next) => {
       });
     }
 
+    // Verificar que sea categoría de admin o propuesta aprobada
+    if (category.isUserProposed && category.status !== 'approved') {
+      return res.status(400).json({
+        success: false,
+        message: 'Esta propuesta no está disponible para votar'
+      });
+    }
+
     // Verificar que la opción existe en la categoría (buscar por texto)
     const option = category.options.find(opt => opt.text === optionText);
 
@@ -88,7 +111,7 @@ exports.vote = async (req, res, next) => {
 
     // Verificar si el usuario ya votó en esta categoría
     const existingVote = await Vote.findOne({
-      user: req.user.id,
+      user: req.user._id,
       category: req.params.id
     });
 
@@ -102,7 +125,7 @@ exports.vote = async (req, res, next) => {
     // Si permite votos múltiples pero ya votó por esta opción
     if (existingVote && category.allowMultipleVotes) {
       const alreadyVotedThisOption = await Vote.findOne({
-        user: req.user.id,
+        user: req.user._id,
         category: req.params.id,
         option: optionText
       });
@@ -117,18 +140,18 @@ exports.vote = async (req, res, next) => {
 
     // Registrar el voto
     await Vote.create({
-      user: req.user.id,
+      user: req.user._id,
       category: req.params.id,
       option: optionText
     });
 
     // Actualizar contador de votos y lista de votantes en la opción
     option.votes += 1;
-    option.voters.push(req.user.id);
+    option.voters.push(req.user._id);
     await category.save();
 
     // Actualizar lista de categorías votadas del usuario
-    await User.findByIdAndUpdate(req.user.id, {
+    await User.findByIdAndUpdate(req.user._id, {
       $addToSet: { votedCategories: req.params.id }
     });
 
@@ -147,7 +170,7 @@ exports.vote = async (req, res, next) => {
 // @access  Private
 exports.getMyVotes = async (req, res, next) => {
   try {
-    const votes = await Vote.find({ user: req.user.id })
+    const votes = await Vote.find({ user: req.user._id })
       .populate('category', 'title description')
       .sort('-votedAt');
 

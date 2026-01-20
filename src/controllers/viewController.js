@@ -54,13 +54,22 @@ exports.registerPage = (req, res) => {
 // @access  Private
 exports.userDashboard = async (req, res) => {
   try {
-    // Obtener categorías activas
-    const categories = await Category.find({ isActive: true })
+    const { hasProposalPeriodEnded, getProposalPeriodInfo } = require('../config/dates');
+    const proposalPeriod = getProposalPeriodInfo();
+
+    // Obtener categorías activas (no propuestas o propuestas aprobadas)
+    const categories = await Category.find({ 
+      isActive: true,
+      $or: [
+        { status: 'approved' },
+        { isUserProposed: false }
+      ]
+    })
       .select('-options.voters')
       .sort('-createdAt');
 
     // Obtener votos del usuario
-    const myVotes = await Vote.find({ user: req.user.id })
+    const myVotes = await Vote.find({ user: req.user._id })
       .populate('category', 'title')
       .sort('-votedAt');
 
@@ -71,6 +80,8 @@ exports.userDashboard = async (req, res) => {
       categories,
       myVotes,
       activeCategories,
+      proposalPeriod,
+      hasEnded: hasProposalPeriodEnded(),
       success: req.query.success,
       error: req.query.error
     });
@@ -87,12 +98,25 @@ exports.userDashboard = async (req, res) => {
 // @access  Private
 exports.categoriesList = async (req, res) => {
   try {
-    // Ordenar por createdAt ascendente (más vieja primero, más nueva última)
-    const categories = await Category.find({ isActive: true })
+    const { isProposalPeriod } = require('../config/dates');
+
+    // Verificar que estamos en período de votación
+    if (!isProposalPeriod()) {
+      return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación ha cerrado. Revisa los resultados en el dashboard.'));
+    }
+
+    // Obtener categorías activas (no propuestas por usuarios) y propuestas aprobadas
+    const categories = await Category.find({ 
+      isActive: true,
+      $or: [
+        { status: 'approved' },
+        { isUserProposed: false }
+      ]
+    })
       .select('-options.voters')
       .sort('createdAt');
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     const votedCategories = user.votedCategories.map(id => id.toString());
 
     res.render('user/voting-roadmap', {
@@ -115,6 +139,13 @@ exports.categoriesList = async (req, res) => {
 // @access  Private
 exports.votePage = async (req, res) => {
   try {
+    const { isProposalPeriod } = require('../config/dates');
+
+    // Verificar que estamos en período de votación
+    if (!isProposalPeriod()) {
+      return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación ha cerrado.'));
+    }
+
     const category = await Category.findById(req.params.id)
       .select('-options.voters');
 
@@ -126,15 +157,26 @@ exports.votePage = async (req, res) => {
       return res.redirect('/categories?error=' + encodeURIComponent('Esta categoría no está activa'));
     }
 
+    // Verificar que sea categoría de admin o propuesta aprobada
+    if (category.isUserProposed && category.status !== 'approved') {
+      return res.redirect('/categories?error=' + encodeURIComponent('Esta propuesta no está disponible'));
+    }
+
     // Verificar si el usuario ya votó
     const hasVoted = await Vote.findOne({
-      user: req.user.id,
+      user: req.user._id,
       category: req.params.id
     });
 
     // Obtener información de progreso
-    const allCategories = await Category.find({ isActive: true }).sort('createdAt');
-    const user = await User.findById(req.user.id);
+    const allCategories = await Category.find({ 
+      isActive: true,
+      $or: [
+        { status: 'approved' },
+        { isUserProposed: false }
+      ]
+    }).sort('createdAt');
+    const user = await User.findById(req.user._id);
     const votedCategoryIds = user.votedCategories.map(id => id.toString());
 
     // Encontrar la posición actual en el roadmap
@@ -185,10 +227,15 @@ exports.adminDashboard = async (req, res) => {
 
     // Votos recientes
     const recentVotes = await Vote.find()
-      .populate('user', 'username')
       .populate('category', 'title')
       .sort('-votedAt')
       .limit(10);
+    
+    // Enriquecer votos con datos de usuario
+    const enrichedVotes = recentVotes.map(vote => ({
+      ...vote.toObject(),
+      user: { username: vote.user }
+    }));
 
     const stats = {
       totalCategories,
@@ -196,7 +243,7 @@ exports.adminDashboard = async (req, res) => {
       totalUsers,
       totalVotes,
       topCategories: categoriesWithVotes,
-      recentVotes
+      recentVotes: enrichedVotes
     };
 
     res.render('admin/dashboard', {
@@ -276,9 +323,9 @@ exports.editCategoryForm = async (req, res) => {
 // @access  Private/Admin
 exports.resultsPage = async (req, res) => {
   try {
-    // Ordenar por createdAt ascendente (más vieja primero, más nueva última)
-    const categories = await Category.find()
-      .populate('options.voters', 'username email')
+    // Mostrar solo categorías activas
+    const categories = await Category.find({ isActive: true })
+      .populate('options.voters', 'username')
       .sort('createdAt');
 
     res.render('admin/results-ceremony', {
@@ -301,15 +348,15 @@ exports.resultsPage = async (req, res) => {
 exports.categoryDetails = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id)
-      .populate('createdBy', 'username email')
-      .populate('options.voters', 'username email');
+      .populate('createdBy', 'username')
+      .populate('options.voters', 'username');
 
     if (!category) {
-      return res.redirect('/admin/categories?error=' + encodeURIComponent('Categoría no encontrada'));
+      return res.redirect('/admin/categories?error=' + encodeURIComponent('Incógnita no encontrada'));
     }
 
     const votes = await Vote.find({ category: req.params.id })
-      .populate('user', 'username email')
+      .populate('user', 'username')
       .sort('-votedAt');
 
     const totalVotes = votes.length;
@@ -325,5 +372,36 @@ exports.categoryDetails = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.redirect('/admin/categories?error=' + encodeURIComponent('Error al cargar los detalles'));
+  }
+};
+
+// @desc    Renderizar resultados para usuarios
+// @route   GET /results
+// @access  Private
+exports.userResultsPage = async (req, res) => {
+  try {
+    const { hasProposalPeriodEnded } = require('../config/dates');
+
+    // Mostrar resultados solo después del período de propuestas
+    if (!hasProposalPeriodEnded()) {
+      return res.redirect('/dashboard?error=' + encodeURIComponent('Los resultados estarán disponibles después del período de votación'));
+    }
+
+    // Obtener solo categorías activas con votos
+    const categories = await Category.find({ isActive: true })
+      .populate('options.voters', 'username')
+      .sort('createdAt');
+
+    res.render('user/results', {
+      user: req.user,
+      categories,
+      success: req.query.success,
+      error: req.query.error
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('error', {
+      message: 'Error al cargar los resultados'
+    });
   }
 };

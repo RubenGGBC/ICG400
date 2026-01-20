@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - ICG400</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('../partials/navbar', { user: user }) %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Resultados Finales</h1>
+                <p>Descubre los ganadores de cada incógnita</p>
+                <a href="/dashboard" class="btn btn-secondary">← Volver al Dashboard</a>
+            </div>
+
+            <%- include('../partials/message') %>
+
+            <% if (categories.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No hay resultados disponibles</h3>
+                    <p>Vuelve más tarde</p>
+                </div>
+            <% } else { %>
+                <div class="results-container">
+                    <% categories.forEach((category, index) => {
+                        const sortedOptions = [...category.options].sort((a, b) => b.votes - a.votes);
+                        const winner = sortedOptions[0];
+                        const totalVotes = category.options.reduce((sum, opt) => sum + opt.votes, 0);
+                        const winnerPercent = totalVotes > 0 ? Math.round((winner.votes / totalVotes) * 100) : 0;
+                    %>
+                        <div class="result-card">
+                            <div class="result-header">
+                                <div class="result-badge"><%= index + 1 %></div>
+                                <div class="result-title-section">
+                                    <h3><%= category.title %></h3>
+                                    <% if (category.description) { %>
+                                        <p class="result-description"><%= category.description %></p>
+                                    <% } %>
+                                    <% if (category.isUserProposed && category.proposedByUsername) { %>
+                                        <p class="result-proposed-by">
+                                            Propuesta por: <strong><%= category.proposedByUsername %></strong>
+                                        </p>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="result-winner">
+                                <div class="winner-icon">🏆</div>
+                                <div class="winner-info">
+                                    <span class="winner-label">Ganador:</span>
+                                    <h4 class="winner-name"><%= winner.text %></h4>
+                                    <span class="winner-stats">
+                                        <%= winner.votes %> votos · <%= winnerPercent %>%
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="result-breakdown">
+                                <h5>Desglose de Votos</h5>
+                                <% sortedOptions.forEach((option, optIndex) => {
+                                    const percent = totalVotes > 0 ? Math.round((option.votes / totalVotes) * 100) : 0;
+                                %>
+                                    <div class="result-row <%= optIndex === 0 ? 'winner-row' : '' %>">
+                                        <span class="result-option-name"><%= option.text %></span>
+                                        <div class="result-bar-container">
+                                            <div class="result-bar" style="width: <%= percent %>%"></div>
+                                        </div>
+                                        <span class="result-votes">
+                                            <%= option.votes %> (<%= percent %>%)
+                                        </span>
+                                    </div>
+                                <% }); %>
+                            </div>
+
+                            <% if (winner.voters && winner.voters.length > 0) { %>
+                                <div class="result-voters">
+                                    <h5>Votantes del Ganador</h5>
+                                    <div class="voters-list">
+                                        <% winner.voters.slice(0, 5).forEach(voter => { %>
+                                            <span class="voter-tag">
+                                                <% if (voter.username) { %>
+                                                    <%= voter.username %>
+                                                <% } else { %>
+                                                    Usuario <%= voter %>
+                                                <% } %>
+                                            </span>
+                                        <% }); %>
+                                        <% if (winner.voters.length > 5) { %>
+                                            <span class="voter-more">+<%= winner.voters.length - 5 %> más</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 ICG400 Sistema de Votación</p>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

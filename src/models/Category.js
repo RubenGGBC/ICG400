@@ -15,7 +15,7 @@ const optionSchema = new mongoose.Schema({
     default: 0
   },
   voters: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User'
   }]
 });
@@ -23,7 +23,7 @@ const optionSchema = new mongoose.Schema({
 const categorySchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, 'El título de la categoría es requerido'],
+    required: [true, 'El título de la incógnita es requerido'],
     trim: true
   },
   description: {
@@ -48,10 +48,39 @@ const categorySchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  // Usuario que creó la incógnita (admin)
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true
+  },
+  // Usuario que propuso la incógnita (si es propuesta de usuario)
+  proposedBy: {
+    type: String,
+    ref: 'User',
+    default: null
+  },
+  // Username del usuario que propuso (para mostrar en votación)
+  proposedByUsername: {
+    type: String,
+    default: null
+  },
+  // Si fue propuesta por un usuario (no creada por admin directamente)
+  isUserProposed: {
+    type: Boolean,
+    default: false
+  },
+  // Estado de la propuesta: approved, pending, rejected
+  status: {
+    type: String,
+    enum: ['approved', 'pending', 'rejected'],
+    default: 'approved'
+  },
+  // Mensaje de rechazo (opcional)
+  rejectionReason: {
+    type: String,
+    trim: true,
+    default: null
   },
   createdAt: {
     type: Date,

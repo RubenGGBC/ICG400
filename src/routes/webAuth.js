@@ -8,13 +8,14 @@ const { sendTokenResponse } = require('../middleware/auth');
 // @access  Public
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
+    if (!username || !password) {
       return res.redirect('/login?error=' + encodeURIComponent('Por favor completa todos los campos'));
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    // username es el _id
+    const user = await User.findById(username);
 
     if (!user) {
       return res.redirect('/login?error=' + encodeURIComponent('Credenciales inválidas'));
@@ -53,10 +54,10 @@ router.post('/login', async (req, res) => {
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password, confirmPassword } = req.body;
+    const { username, password, confirmPassword } = req.body;
 
     // Validaciones
-    if (!username || !email || !password || !confirmPassword) {
+    if (!username || !password || !confirmPassword) {
       return res.redirect('/register?error=' + encodeURIComponent('Por favor completa todos los campos'));
     }
 
@@ -68,17 +69,20 @@ router.post('/register', async (req, res) => {
       return res.redirect('/register?error=' + encodeURIComponent('La contraseña debe tener al menos 6 caracteres'));
     }
 
-    // Verificar si el usuario ya existe
-    const userExists = await User.findOne({ $or: [{ email }, { username }] });
+    if (username.length < 3) {
+      return res.redirect('/register?error=' + encodeURIComponent('El usuario debe tener al menos 3 caracteres'));
+    }
+
+    // Verificar si el usuario ya existe (username es el _id)
+    const userExists = await User.findById(username);
 
     if (userExists) {
-      return res.redirect('/register?error=' + encodeURIComponent('El usuario o email ya existe'));
+      return res.redirect('/register?error=' + encodeURIComponent('El nombre de usuario ya existe'));
     }
 
     // Crear usuario
     const user = await User.create({
-      username,
-      email,
+      _id: username,
       password
     });
 

@@ -6,22 +6,21 @@ const { sendTokenResponse } = require('../middleware/auth');
 // @access  Public
 exports.register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
 
     // Verificar si el usuario ya existe
-    const userExists = await User.findOne({ $or: [{ email }, { username }] });
+    const userExists = await User.findById(username);
 
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: 'El usuario o email ya existe'
+        message: 'El nombre de usuario ya existe'
       });
     }
 
-    // Crear usuario
+    // Crear usuario (username es el _id)
     const user = await User.create({
-      username,
-      email,
+      _id: username,
       password
     });
 
@@ -36,18 +35,18 @@ exports.register = async (req, res, next) => {
 // @access  Public
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    // Validar email y password
-    if (!email || !password) {
+    // Validar username y password
+    if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Por favor proporciona email y contraseña'
+        message: 'Por favor proporciona usuario y contraseña'
       });
     }
 
-    // Verificar usuario
-    const user = await User.findOne({ email }).select('+password');
+    // Verificar usuario (username es el _id)
+    const user = await User.findById(username);
 
     if (!user) {
       return res.status(401).json({
@@ -77,7 +76,7 @@ exports.login = async (req, res, next) => {
 // @access  Private
 exports.getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
 
     res.status(200).json({
       success: true,

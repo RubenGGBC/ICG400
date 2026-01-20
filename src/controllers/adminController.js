@@ -40,7 +40,7 @@ exports.createCategory = async (req, res, next) => {
 exports.getAllCategories = async (req, res, next) => {
   try {
     const categories = await Category.find()
-      .populate('createdBy', 'username email')
+      .populate('createdBy', 'username')
       .sort('-createdAt');
 
     res.status(200).json({
@@ -59,19 +59,19 @@ exports.getAllCategories = async (req, res, next) => {
 exports.getCategoryDetails = async (req, res, next) => {
   try {
     const category = await Category.findById(req.params.id)
-      .populate('createdBy', 'username email')
-      .populate('options.voters', 'username email');
+      .populate('createdBy', 'username')
+      .populate('options.voters', 'username');
 
     if (!category) {
       return res.status(404).json({
         success: false,
-        message: 'Categoría no encontrada'
+        message: 'Incógnita no encontrada'
       });
     }
 
     // Obtener todos los votos de esta categoría
     const votes = await Vote.find({ category: req.params.id })
-      .populate('user', 'username email')
+      .populate('user', 'username')
       .sort('-votedAt');
 
     res.status(200).json({
@@ -97,7 +97,7 @@ exports.updateCategory = async (req, res, next) => {
     if (!category) {
       return res.status(404).json({
         success: false,
-        message: 'Categoría no encontrada'
+        message: 'Incógnita no encontrada'
       });
     }
 
@@ -133,14 +133,14 @@ exports.deleteCategory = async (req, res, next) => {
     if (!category) {
       return res.status(404).json({
         success: false,
-        message: 'Categoría no encontrada'
+        message: 'Incógnita no encontrada'
       });
     }
 
-    // Eliminar todos los votos asociados a esta categoría
+    // Eliminar todos los votos asociados a esta incógnita
     await Vote.deleteMany({ category: req.params.id });
 
-    // Eliminar la categoría de las listas de votedCategories de los usuarios
+    // Eliminar la incógnita de las listas de votedCategories de los usuarios
     await User.updateMany(
       { votedCategories: req.params.id },
       { $pull: { votedCategories: req.params.id } }
@@ -150,7 +150,7 @@ exports.deleteCategory = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Categoría eliminada exitosamente'
+      message: 'Incógnita eliminada exitosamente'
     });
   } catch (error) {
     next(error);

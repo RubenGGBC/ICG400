@@ -20,28 +20,28 @@
 
             <div class="dashboard-stats">
                 <div class="stat-card stat-primary">
-                                        <div class="stat-info">
+                                    <div class="stat-info">
                         <h3><%= stats.totalCategories %></h3>
-                        <p>Total Categorías</p>
+                        <p>Total Incógnitas</p>
                     </div>
                 </div>
 
                 <div class="stat-card stat-success">
-                                        <div class="stat-info">
+                                    <div class="stat-info">
                         <h3><%= stats.activeCategories %></h3>
-                        <p>Categorías Activas</p>
+                        <p>Incógnitas Activas</p>
                     </div>
                 </div>
 
                 <div class="stat-card stat-info">
-                                        <div class="stat-info">
+                                    <div class="stat-info">
                         <h3><%= stats.totalUsers %></h3>
                         <p>Usuarios Registrados</p>
                     </div>
                 </div>
 
                 <div class="stat-card stat-warning">
-                                        <div class="stat-info">
+                                    <div class="stat-info">
                         <h3><%= stats.totalVotes %></h3>
                         <p>Total de Votos</p>
                     </div>
@@ -50,10 +50,10 @@
 
             <div class="admin-actions">
                 <a href="/admin/categories/new" class="btn btn-primary">
-                    Nueva Categoría
+                    Nueva Incógnita
                 </a>
                 <a href="/admin/categories" class="btn btn-secondary">
-                    Gestionar Categorías
+                    Gestionar Incógnitas
                 </a>
                 <a href="/admin/results" class="btn btn-info">
                      Ver Resultados
@@ -64,7 +64,7 @@
             </div>
 
             <div class="section">
-                <h2>Categorías Más Votadas</h2>
+                <h2>Incógnitas Más Votadas</h2>
                 <% if (stats.topCategories && stats.topCategories.length > 0) { %>
                     <div class="top-categories">
                         <% stats.topCategories.forEach((cat, index) => { %>
@@ -81,7 +81,7 @@
                         <% }); %>
                     </div>
                 <% } else { %>
-                    <p class="empty-state">No hay categorías con votos aún</p>
+                    <p class="empty-state">No hay incógnitas con votos aún</p>
                 <% } %>
             </div>
 

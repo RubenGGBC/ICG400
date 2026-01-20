@@ -2228,3 +2228,753 @@ body {
     font-size: 1rem;
   }
 }
+
+/* ==========================================
+   PROPOSALS PANEL - ADMIN
+   ========================================== */
+
+.proposals-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--neon-pink);
+  border-bottom-color: var(--neon-pink);
+  box-shadow: 0 2px 10px rgba(255, 0, 110, 0.2);
+}
+
+.tab .count {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: var(--background);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--neon-cyan);
+}
+
+.admin-proposals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.admin-proposal-card {
+  background: var(--surface);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.admin-proposal-card:hover {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 25px rgba(255, 0, 110, 0.2);
+  transform: translateY(-2px);
+}
+
+.admin-proposal-card.status-pending {
+  border-left: 4px solid var(--warning-color);
+}
+
+.admin-proposal-card.status-approved {
+  border-left: 4px solid var(--success-color);
+}
+
+.admin-proposal-card.status-rejected {
+  border-left: 4px solid var(--danger-color);
+  opacity: 0.8;
+}
+
+.proposal-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.proposal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.proposal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: rgba(255, 190, 11, 0.2);
+  color: var(--warning-color);
+  border: 1px solid var(--warning-color);
+}
+
+.status-badge.approved {
+  background: rgba(6, 255, 165, 0.2);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.status-badge.rejected {
+  background: rgba(255, 0, 110, 0.2);
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+}
+
+.proposal-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 0.75rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  margin: 0;
+}
+
+.proposal-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta-item strong {
+  color: var(--neon-cyan);
+}
+
+.rejection-reason {
+  padding: 0.75rem;
+  background: rgba(255, 0, 110, 0.1);
+  border-left: 3px solid var(--danger-color);
+  border-radius: 0.375rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.approval-notice {
+  padding: 0.75rem;
+  background: rgba(6, 255, 165, 0.1);
+  border-left: 3px solid var(--success-color);
+  border-radius: 0.375rem;
+  color: var(--success-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.proposal-actions form {
+  display: contents;
+}
+
+.proposal-actions .btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.proposal-actions .btn-success {
+  background: linear-gradient(135deg, var(--success-color), #00d95f);
+  color: var(--background);
+  border: none;
+}
+
+.proposal-actions .btn-success:hover {
+  box-shadow: 0 0 15px rgba(6, 255, 165, 0.4);
+  transform: translateY(-1px);
+}
+
+.proposal-actions .btn-danger {
+  background: linear-gradient(135deg, var(--danger-color), #d90060);
+  color: white;
+  border: none;
+}
+
+.proposal-actions .btn-danger:hover {
+  box-shadow: 0 0 15px rgba(255, 0, 110, 0.4);
+  transform: translateY(-1px);
+}
+
+.period-info-box {
+  background: linear-gradient(135deg, rgba(255, 190, 11, 0.1), rgba(0, 245, 255, 0.1));
+  border: 2px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.period-info-box .badge {
+  margin: 0;
+}
+
+.period-info-box span {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Modal para rechazar */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.modal.show {
+  display: flex !important;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--border-color);
+  animation: modal-slide-up 0.3s ease;
+}
+
+@keyframes modal-slide-up {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--danger-color);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-body p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.modal-body p strong {
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-proposal-card {
+    grid-template-columns: 1fr;
+  }
+
+  .proposal-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .proposal-header h3 {
+    flex: none;
+  }
+
+  .proposal-actions {
+    flex-direction: row;
+  }
+
+  .proposal-actions .btn {
+    width: auto;
+    flex: 1;
+  }
+
+  .proposal-meta {
+    flex-direction: column;
+  }
+
+  .proposals-tabs {
+    gap: 0.5rem;
+  }
+
+  .tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ==========================================
+   HOW IT WORKS SECTION
+   ========================================== */
+
+.how-it-works-section {
+  margin-bottom: 2rem;
+}
+
+.how-it-works-card {
+  background: linear-gradient(135deg, rgba(131, 56, 236, 0.1), rgba(0, 245, 255, 0.05));
+  border: 2px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.how-it-works-card:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 25px rgba(0, 245, 255, 0.2);
+}
+
+.how-it-works-card h2 {
+  text-align: center;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+}
+
+.how-it-works-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.step:hover {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 15px rgba(255, 0, 110, 0.2);
+  transform: translateY(-2px);
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 0, 110, 0.4);
+}
+
+.step-content h4 {
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-content p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.step-content p strong {
+  color: var(--neon-cyan);
+}
+
+.how-it-works-cta {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .how-it-works-card {
+    padding: 1.5rem;
+  }
+
+  .how-it-works-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    padding: 0.75rem;
+  }
+
+  .step-number {
+    width: 35px;
+    height: 35px;
+    min-width: 35px;
+    font-size: 1rem;
+  }
+}
+
+/* ==========================================
+   PROPOSE PAGE STYLES
+   ========================================== */
+
+/* Banner de período cerrado */
+.proposal-closed-banner {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(131, 56, 236, 0.1));
+  border: 2px solid var(--danger-color);
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.proposal-closed-banner .banner-icon {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 20px rgba(255, 0, 110, 0.5));
+}
+
+.proposal-closed-banner h2 {
+  color: var(--text-primary);
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.proposal-closed-banner p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.proposal-closed-banner p strong {
+  color: var(--neon-cyan);
+}
+
+/* Banner informativo de propuestas */
+.proposal-info-banner {
+  background: linear-gradient(135deg, rgba(255, 190, 11, 0.15), rgba(0, 245, 255, 0.1));
+  border: 2px solid var(--warning-color);
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.proposal-info-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 190, 11, 0.1) 50%, transparent 70%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.proposal-info-banner .banner-icon {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 0 15px rgba(255, 190, 11, 0.6));
+  animation: bulb-glow 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes bulb-glow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 190, 11, 0.6)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 25px rgba(255, 190, 11, 0.9)); }
+}
+
+.proposal-info-banner .banner-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.proposal-info-banner h3 {
+  color: var(--warning-color);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px rgba(255, 190, 11, 0.3);
+}
+
+.proposal-info-banner p {
+  color: var(--text-secondary);
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.proposal-info-banner p strong {
+  color: var(--neon-cyan);
+  font-weight: 700;
+}
+
+/* Formulario de propuesta mejorado */
+.form-container.propose-form {
+  max-width: 700px;
+}
+
+.form-container .form-group input,
+.form-container .form-group textarea {
+  background: var(--background);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  padding: 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-container .form-group input:focus,
+.form-container .form-group textarea:focus {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+  outline: none;
+}
+
+.form-container .form-group input::placeholder,
+.form-container .form-group textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.form-container .form-group label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Opciones fijas */
+.fixed-options-info {
+  background: linear-gradient(135deg, rgba(131, 56, 236, 0.1), rgba(0, 245, 255, 0.05));
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.fixed-options-info .form-hint {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.fixed-options-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fixed-options-list li {
+  background: var(--surface);
+  border: 2px solid var(--neon-purple);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--neon-cyan);
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(131, 56, 236, 0.2);
+}
+
+.fixed-options-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(131, 56, 236, 0.4);
+  border-color: var(--neon-cyan);
+}
+
+/* Aviso de propuesta */
+.proposal-notice {
+  background: rgba(0, 245, 255, 0.1);
+  border-left: 4px solid var(--neon-cyan);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.proposal-notice p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.proposal-notice strong {
+  color: var(--neon-cyan);
+}
+
+/* Botón de enviar mejorado */
+.form-actions .btn-primary {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-actions .btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.form-actions .btn-primary:hover::before {
+  left: 100%;
+}
+
+/* Responsive para página de propuestas */
+@media (max-width: 768px) {
+  .proposal-info-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .proposal-info-banner .banner-icon {
+    font-size: 3rem;
+  }
+
+  .fixed-options-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .proposal-closed-banner {
+    padding: 2rem 1.5rem;
+  }
+
+  .proposal-closed-banner .banner-icon {
+    font-size: 4rem;
+  }
+
+  .proposal-closed-banner h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fixed-options-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .fixed-options-list li {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}

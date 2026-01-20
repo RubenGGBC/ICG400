@@ -18,6 +18,51 @@
 
             <%- include('../partials/message') %>
 
+            <!-- Sección: Cómo Funciona -->
+            <div class="how-it-works-section">
+                <div class="how-it-works-card">
+                    <h2>¿Cómo funcionan los Premios ICG400?</h2>
+
+                    <div class="how-it-works-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Propón tus incógnitas</h4>
+                                <p>Tienes hasta el <strong>domingo 25 de enero</strong> para enviar tus sugerencias de incógnitas, nada de putos trolleos cabrones</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Opciones fijas</h4>
+                                <p>Todas las incógnitas tendrán las mismas 4 opciones: <strong>Gringo</strong>, <strong>Marco</strong>, <strong>Alex</strong> y <strong>Joak</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Revisión de moderadores</h4>
+                                <p>Las propuestas serán aceptadas o rechazadas según el criterio de Rufer y Jam</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Período de votación</h4>
+                                <p>Una vez finalice el plazo de sugerencias, podrás votar en todas las incógnitas que hayan sido aprobadas.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="how-it-works-cta">
+                        <a href="/propose" class="btn btn-secondary">Proponer Incógnita</a>
+                    </div>
+                </div>
+            </div>
+
             <div class="dashboard-stats">
                 <div class="stat-card">
                     <div class="stat-info">
@@ -28,7 +73,7 @@
                 <div class="stat-card">
                     <div class="stat-info">
                         <h3><%= activeCategories %></h3>
-                        <p>Categorías Totales</p>
+                        <p>Incógnitas Totales</p>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -39,28 +84,41 @@
                 </div>
             </div>
 
-            <!-- Sección de Iniciar Votación -->
+            <!-- Sección de Iniciar Votación / Ver Resultados -->
             <div class="start-voting-section">
-                <% if (activeCategories === 0) { %>
-                    <div class="voting-card voting-empty">
-                        <div class="voting-icon">📋</div>
-                        <h2>No hay votaciones activas</h2>
-                        <p>Vuelve más tarde para participar en las votaciones</p>
-                    </div>
-                <% } else if (myVotes.length >= activeCategories) { %>
-                    <div class="voting-card voting-complete">
-                        <div class="voting-icon">🎉</div>
-                        <h2>¡Has completado todas las votaciones!</h2>
-                        <p>Gracias por participar en los Premios ICG400</p>
-                        <a href="/categories" class="btn btn-secondary">Ver tu progreso</a>
-                    </div>
+                <% if (!hasEnded) { %>
+                    <!-- Período activo: mostrar votación -->
+                    <% if (activeCategories === 0) { %>
+                        <div class="voting-card voting-empty">
+                            <div class="voting-icon">📋</div>
+                            <h2>No hay votaciones activas</h2>
+                            <p>Vuelve más tarde para participar en las votaciones</p>
+                        </div>
+                    <% } else if (myVotes.length >= activeCategories) { %>
+                        <div class="voting-card voting-complete">
+                            <div class="voting-icon">🎉</div>
+                            <h2>¡Has completado todas las votaciones!</h2>
+                            <p>Gracias por participar en los Premios ICG400</p>
+                            <a href="/categories" class="btn btn-secondary">Ver tu progreso</a>
+                        </div>
+                    <% } else { %>
+                        <div class="voting-card voting-ready">
+                            <div class="voting-icon">🗳️</div>
+                            <h2>Votaciones Abiertas</h2>
+                            <p>Hay <strong><%= activeCategories - myVotes.length %></strong> incógnitas esperando tu voto</p>
+                            <a href="/categories" class="btn btn-primary btn-lg btn-start-voting">
+                                <span class="btn-icon">→</span> Iniciar Votación
+                            </a>
+                        </div>
+                    <% } %>
                 <% } else { %>
-                    <div class="voting-card voting-ready">
-                        <div class="voting-icon">🗳️</div>
-                        <h2>Votaciones Abiertas</h2>
-                        <p>Hay <strong><%= activeCategories - myVotes.length %></strong> categorías esperando tu voto</p>
-                        <a href="/categories" class="btn btn-primary btn-lg btn-start-voting">
-                            <span class="btn-icon">→</span> Iniciar Votación
+                    <!-- Período terminado: mostrar resultados -->
+                    <div class="voting-card voting-results">
+                        <div class="voting-icon">🏆</div>
+                        <h2>¡Período Finalizado!</h2>
+                        <p>Los resultados han sido compilados. ¡Descubre a los ganadores!</p>
+                        <a href="/results" class="btn btn-primary btn-lg">
+                            <span class="btn-icon">→</span> Ver Resultados
                         </a>
                     </div>
                 <% } %>
@@ -71,7 +129,7 @@
 
                 <% if (myVotes.length === 0) { %>
                     <div class="empty-state">
-                        <p>Aún no has votado en ninguna categoría</p>
+                        <p>Aún no has votado en ninguna incógnita</p>
                         <p class="text-muted">Inicia la votación para comenzar a participar</p>
                     </div>
                 <% } else { %>

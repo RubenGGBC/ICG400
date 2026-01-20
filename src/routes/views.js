@@ -11,8 +11,17 @@ const {
   newCategoryForm,
   editCategoryForm,
   resultsPage,
-  categoryDetails
+  categoryDetails,
+  userResultsPage
 } = require('../controllers/viewController');
+const {
+  newProposalPage,
+  createProposal,
+  myProposals,
+  adminProposals,
+  approveProposal,
+  rejectProposal
+} = require('../controllers/proposalController');
 const { protect, authorize } = require('../middleware/auth');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
@@ -47,6 +56,13 @@ router.get('/register', registerPage);
 router.get('/dashboard', protect, userDashboard);
 router.get('/categories', protect, categoriesList);
 router.get('/categories/:id', protect, votePage);
+router.get('/results', protect, userResultsPage);
+
+// Rutas de propuestas de usuario
+router.get('/propose', protect, newProposalPage);
+router.get('/proposals/new', protect, newProposalPage);
+router.post('/proposals/create', protect, createProposal);
+router.get('/my-proposals', protect, myProposals);
 
 // Rutas de admin (requieren autenticación y rol admin)
 router.get('/admin', protect, authorize('admin'), adminDashboard);
@@ -55,6 +71,12 @@ router.get('/admin/categories/new', protect, authorize('admin'), newCategoryForm
 router.get('/admin/categories/:id', protect, authorize('admin'), categoryDetails);
 router.get('/admin/categories/:id/edit', protect, authorize('admin'), editCategoryForm);
 router.get('/admin/results', protect, authorize('admin'), resultsPage);
+
+// Rutas de propuestas para admin
+router.get('/admin/proposals', protect, authorize('admin'), adminProposals);
+router.post('/admin/proposals/:id/approve', protect, authorize('admin'), approveProposal);
+router.post('/admin/proposals/:id/reject', protect, authorize('admin'), rejectProposal);
+
 router.get('/admin/users', protect, authorize('admin'), async (req, res) => {
   try {
     const users = await User.find()

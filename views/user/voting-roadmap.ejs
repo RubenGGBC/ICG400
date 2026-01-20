@@ -13,7 +13,7 @@
         <div class="container">
             <div class="roadmap-header">
                 <h1>Votaciones ICG400</h1>
-                <p>Vota en cada categoría para completar tu participación</p>
+                <p>Vota en cada incógnita para completar tu participación</p>
             </div>
 
             <%- include('../partials/message') %>
@@ -29,7 +29,7 @@
             <div class="voting-progress-container">
                 <div class="voting-progress-header">
                     <span class="progress-label">Tu progreso</span>
-                    <span class="progress-count"><%= votedCount %> de <%= totalCategories %> categorías</span>
+                    <span class="progress-count"><%= votedCount %> de <%= totalCategories %> incógnitas</span>
                 </div>
                 <div class="voting-progress-bar">
                     <div class="voting-progress-fill" style="width: <%= progressPercent %>%"></div>
@@ -49,11 +49,11 @@
 
             <% if (categories.length === 0) { %>
                 <div class="empty-state">
-                    <h3>No hay categorías activas</h3>
+                    <h3>No hay incógnitas activas</h3>
                     <p>Vuelve más tarde para participar en las votaciones</p>
                 </div>
             <% } else { %>
-                <!-- Roadmap de Categorías -->
+                <!-- Roadmap de Incógnitas -->
                 <div class="voting-roadmap">
                     <% categories.forEach((category, index) => {
                         const hasVoted = votedCategories.includes(category._id.toString());
@@ -95,6 +95,11 @@
                                         </span>
                                         <% if (category.allowMultipleVotes) { %>
                                             <span class="badge badge-info">Votos múltiples</span>
+                                        <% } %>
+                                        <% if (category.isUserProposed && category.proposedBy) { %>
+                                            <span class="proposed-by">
+                                                Propuesta por: <strong><%= category.proposedBy %></strong>
+                                            </span>
                                         <% } %>
                                     </div>
 

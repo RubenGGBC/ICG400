@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= category ? 'Editar' : 'Nueva' %> Categoría - Admin</title>
+    <title><%= category ? 'Editar' : 'Nueva' %> Incógnita - Admin</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1><%= category ? 'Editar' : 'Nueva' %> Categoría</h1>
+                <h1><%= category ? 'Editar' : 'Nueva' %> Incógnita</h1>
                 <a href="/admin/categories" class="btn btn-secondary">← Volver</a>
             </div>
 
@@ -25,7 +25,7 @@
                     class="category-form"
                 >
                     <div class="form-group">
-                        <label for="title">Título de la Categoría *</label>
+                        <label for="title">Título de la Incógnita *</label>
                         <input
                             type="text"
                             id="title"
@@ -42,7 +42,7 @@
                             id="description"
                             name="description"
                             rows="3"
-                            placeholder="Descripción de la categoría (opcional)"
+                            placeholder="Descripción de la incógnita (opcional)"
                         ><%= category ? category.description : '' %></textarea>
                     </div>
 
@@ -64,28 +64,28 @@
                                 name="isActive"
                                 <%= !category || category.isActive ? 'checked' : '' %>
                             >
-                            Categoría activa
+                            Incógnita activa
                         </label>
                     </div>
 
                     <div class="form-group">
                         <label>Opciones de Votación (Fijas)</label>
                         <div class="fixed-options-info">
-                            <p class="form-hint">Las opciones para todas las categorías son:</p>
+                            <p class="form-hint">Las opciones para todas las incógnitas son:</p>
                             <ul class="fixed-options-list">
                                 <li>Gringo</li>
                                 <li>Marco</li>
                                 <li>Alex</li>
                                 <li>Joak</li>
                             </ul>
-                            <p class="form-hint">Estas opciones se agregarán automáticamente a la categoría.</p>
+                            <p class="form-hint">Estas opciones se agregarán automáticamente a la incógnita.</p>
                         </div>
                     </div>
 
                     <div class="form-actions">
                         <a href="/admin/categories" class="btn btn-secondary">Cancelar</a>
                         <button type="submit" class="btn btn-primary">
-                            <%= category ? 'Actualizar' : 'Crear' %> Categoría
+                            <%= category ? 'Actualizar' : 'Crear' %> Incógnita
                         </button>
                     </div>
                 </form>
