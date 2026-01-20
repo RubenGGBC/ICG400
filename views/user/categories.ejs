@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorías - ICG400</title>
+    <title>Incógnitas - ICG400</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -12,15 +12,15 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>Categorías de Votación</h1>
-                <p>Selecciona una categoría para participar</p>
+                <h1>Incógnitas</h1>
+                <p>Selecciona una incógnita para votar</p>
             </div>
 
             <%- include('../partials/message') %>
 
             <% if (categories.length === 0) { %>
                 <div class="empty-state">
-                    <h3>No hay categorías activas</h3>
+                    <h3>No hay incógnitas activas</h3>
                     <p>Vuelve más tarde para participar en las votaciones</p>
                 </div>
             <% } else { %>
@@ -48,7 +48,7 @@
                             <% const hasVoted = votedCategories.includes(category._id.toString()); %>
                             <% if (hasVoted) { %>
                                 <button class="btn btn-secondary btn-block" disabled>
-                                    Ya votaste en esta categoría
+                                    Ya votaste en esta incógnita
                                 </button>
                             <% } else { %>
                                 <a href="/categories/<%= category._id %>" class="btn btn-primary btn-block">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revelación de Ganadores - Admin</title>
+    <title>Resultados - Admin</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -13,8 +13,8 @@
         <div class="container">
             <div class="revelation-header">
                 <div>
-                    <h1>Revelación de Ganadores</h1>
-                    <p>Descubre los ganadores de cada categoría</p>
+                    <h1>Resultados</h1>
+                    <p>Descubre los resultados de cada incógnita</p>
                 </div>
                 <button class="btn-reset" onclick="location.reload()">Resetear</button>
             </div>
@@ -23,9 +23,9 @@
 
             <% if (categories.length === 0) { %>
                 <div class="empty-state">
-                    <h3>No hay categorías para mostrar</h3>
-                    <p>Crea categorías para ver sus resultados</p>
-                    <a href="/admin/categories/new" class="btn btn-primary">Crear Categoría</a>
+                    <h3>No hay incógnitas para mostrar</h3>
+                    <p>Crea incógnitas para ver sus resultados</p>
+                    <a href="/admin/categories/new" class="btn btn-primary">Crear Incógnita</a>
                 </div>
             <% } else { %>
                 <div class="categories-revelation-grid">

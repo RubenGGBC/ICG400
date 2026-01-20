@@ -13,7 +13,7 @@
         <div class="container">
             <div class="page-header">
                 <h1>Resultados Finales</h1>
-                <p>Descubre los ganadores de cada incógnita</p>
+                <p>Descubre los resultados de cada incógnita</p>
                 <a href="/dashboard" class="btn btn-secondary">← Volver al Dashboard</a>
             </div>
 
@@ -51,7 +51,7 @@
                             <div class="result-winner">
                                 <div class="winner-icon">🏆</div>
                                 <div class="winner-info">
-                                    <span class="winner-label">Ganador:</span>
+                                    <span class="winner-label">Resultado:</span>
                                     <h4 class="winner-name"><%= winner.text %></h4>
                                     <span class="winner-stats">
                                         <%= winner.votes %> votos · <%= winnerPercent %>%
@@ -78,7 +78,7 @@
 
                             <% if (winner.voters && winner.voters.length > 0) { %>
                                 <div class="result-voters">
-                                    <h5>Votantes del Ganador</h5>
+                                    <h5>Votantes del Primero</h5>
                                     <div class="voters-list">
                                         <% winner.voters.slice(0, 5).forEach(voter => { %>
                                             <span class="voter-tag">
