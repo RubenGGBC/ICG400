@@ -52,13 +52,9 @@
                             <div class="step-number">4</div>
                             <div class="step-content">
                                 <h4>Período de votación</h4>
-                                <p>Una vez finalice el plazo de sugerencias, podrás votar en todas las incógnitas que hayan sido aprobadas.</p>
+                                <p>Del <strong>lunes 26</strong> al <strong>miércoles 28 de enero (17:00)</strong> podrás votar en todas las incógnitas aprobadas.</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="how-it-works-cta">
-                        <a href="/propose" class="btn btn-secondary">Proponer Incógnita</a>
                     </div>
                 </div>
             </div>
@@ -87,7 +83,17 @@
             <!-- Sección de Iniciar Votación / Ver Resultados -->
             <div class="start-voting-section">
                 <% if (!hasEnded) { %>
-                    <!-- Período activo: mostrar votación -->
+                    <!-- Período de sugerencias activo -->
+                    <div class="voting-card voting-waiting">
+                        <div class="voting-icon">✏️</div>
+                        <h2>Período de Sugerencias</h2>
+                        <p>Envía tus propuestas de incógnitas. La votación comenzará el <strong>lunes 26 de enero</strong>.</p>
+                        <a href="/propose" class="btn btn-primary btn-lg">
+                            <span class="btn-icon">→</span> Proponer Incógnita
+                        </a>
+                    </div>
+                <% } else if (isVotingActive) { %>
+                    <!-- Período de votación activo -->
                     <% if (activeCategories === 0) { %>
                         <div class="voting-card voting-empty">
                             <div class="voting-icon">📋</div>
@@ -106,6 +112,7 @@
                             <div class="voting-icon">🗳️</div>
                             <h2>Votaciones Abiertas</h2>
                             <p>Hay <strong><%= activeCategories - myVotes.length %></strong> incógnitas esperando tu voto</p>
+                            <p class="text-muted">Tienes hasta el <strong>miércoles 28 de enero a las 17:00</strong></p>
                             <a href="/categories" class="btn btn-primary btn-lg btn-start-voting">
                                 <span class="btn-icon">→</span> Iniciar Votación
                             </a>

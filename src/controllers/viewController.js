@@ -54,8 +54,9 @@ exports.registerPage = (req, res) => {
 // @access  Private
 exports.userDashboard = async (req, res) => {
   try {
-    const { hasProposalPeriodEnded, getProposalPeriodInfo } = require('../config/dates');
+    const { hasProposalPeriodEnded, getProposalPeriodInfo, getVotingPeriodInfo, isVotingPeriod, hasVotingPeriodEnded } = require('../config/dates');
     const proposalPeriod = getProposalPeriodInfo();
+    const votingPeriod = getVotingPeriodInfo();
 
     // Obtener categorías activas (no propuestas o propuestas aprobadas)
     const categories = await Category.find({ 
@@ -81,7 +82,10 @@ exports.userDashboard = async (req, res) => {
       myVotes,
       activeCategories,
       proposalPeriod,
+      votingPeriod,
       hasEnded: hasProposalPeriodEnded(),
+      isVotingActive: isVotingPeriod(),
+      hasVotingEnded: hasVotingPeriodEnded(),
       success: req.query.success,
       error: req.query.error
     });
@@ -98,11 +102,14 @@ exports.userDashboard = async (req, res) => {
 // @access  Private
 exports.categoriesList = async (req, res) => {
   try {
-    const { isProposalPeriod } = require('../config/dates');
+    const { isVotingPeriod, hasVotingPeriodEnded } = require('../config/dates');
 
     // Verificar que estamos en período de votación
-    if (!isProposalPeriod()) {
-      return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación ha cerrado. Revisa los resultados en el dashboard.'));
+    if (!isVotingPeriod()) {
+      if (hasVotingPeriodEnded()) {
+        return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación ha cerrado. Revisa los resultados en el dashboard.'));
+      }
+      return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación aún no ha comenzado.'));
     }
 
     // Obtener categorías activas (no propuestas por usuarios) y propuestas aprobadas
@@ -139,11 +146,14 @@ exports.categoriesList = async (req, res) => {
 // @access  Private
 exports.votePage = async (req, res) => {
   try {
-    const { isProposalPeriod } = require('../config/dates');
+    const { isVotingPeriod, hasVotingPeriodEnded } = require('../config/dates');
 
     // Verificar que estamos en período de votación
-    if (!isProposalPeriod()) {
-      return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación ha cerrado.'));
+    if (!isVotingPeriod()) {
+      if (hasVotingPeriodEnded()) {
+        return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación ha cerrado.'));
+      }
+      return res.redirect('/dashboard?error=' + encodeURIComponent('El período de votación aún no ha comenzado.'));
     }
 
     const category = await Category.findById(req.params.id)
@@ -380,10 +390,10 @@ exports.categoryDetails = async (req, res) => {
 // @access  Private
 exports.userResultsPage = async (req, res) => {
   try {
-    const { hasProposalPeriodEnded } = require('../config/dates');
+    const { hasVotingPeriodEnded } = require('../config/dates');
 
-    // Mostrar resultados solo después del período de propuestas
-    if (!hasProposalPeriodEnded()) {
+    // Mostrar resultados solo después del período de votación
+    if (!hasVotingPeriodEnded()) {
       return res.redirect('/dashboard?error=' + encodeURIComponent('Los resultados estarán disponibles después del período de votación'));
     }
 
