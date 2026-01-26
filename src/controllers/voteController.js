@@ -8,12 +8,9 @@ const { isProposalPeriod } = require('../config/dates');
 // @access  Private
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({ 
+    const categories = await Category.find({
       isActive: true,
-      $or: [
-        { status: 'approved' },
-        { isUserProposed: false }
-      ]
+      status: { $ne: 'rejected' }
     })
       .select('-options.voters')
       .sort('-createdAt');

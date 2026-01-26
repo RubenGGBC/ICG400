@@ -59,12 +59,9 @@ exports.userDashboard = async (req, res) => {
     const votingPeriod = getVotingPeriodInfo();
 
     // Obtener categorías activas (no propuestas o propuestas aprobadas)
-    const categories = await Category.find({ 
+    const categories = await Category.find({
       isActive: true,
-      $or: [
-        { status: 'approved' },
-        { isUserProposed: false }
-      ]
+      status: { $ne: 'rejected' }
     })
       .select('-options.voters')
       .sort('-createdAt');
@@ -113,12 +110,9 @@ exports.categoriesList = async (req, res) => {
     }
 
     // Obtener categorías activas (no propuestas por usuarios) y propuestas aprobadas
-    const categories = await Category.find({ 
+    const categories = await Category.find({
       isActive: true,
-      $or: [
-        { status: 'approved' },
-        { isUserProposed: false }
-      ]
+      status: { $ne: 'rejected' }
     })
       .select('-options.voters')
       .sort('createdAt');
@@ -179,12 +173,9 @@ exports.votePage = async (req, res) => {
     });
 
     // Obtener información de progreso
-    const allCategories = await Category.find({ 
+    const allCategories = await Category.find({
       isActive: true,
-      $or: [
-        { status: 'approved' },
-        { isUserProposed: false }
-      ]
+      status: { $ne: 'rejected' }
     }).sort('createdAt');
     const user = await User.findById(req.user._id);
     const votedCategoryIds = user.votedCategories.map(id => id.toString());
