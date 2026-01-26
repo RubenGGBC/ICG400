@@ -58,7 +58,6 @@
                                         <div class="option-content">
                                             <span class="option-number"><%= index + 1 %></span>
                                             <span class="option-text"><%= option.text %></span>
-                                            <span class="option-votes"><%= option.votes %> votos</span>
                                         </div>
                                     </label>
                                 </div>
@@ -78,10 +77,6 @@
                     </form>
 
                     <div class="vote-info">
-                        <p>
-                            <strong>Total de votos:</strong>
-                            <%= category.options.reduce((sum, opt) => sum + opt.votes, 0) %>
-                        </p>
                         <% if (category.allowMultipleVotes) { %>
                             <p class="info-message">
                                 Puedes votar múltiples veces en diferentes opciones
