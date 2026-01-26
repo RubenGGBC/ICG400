@@ -1,7 +1,7 @@
 const Category = require('../models/Category');
 const Vote = require('../models/Vote');
 const User = require('../models/User');
-const { isProposalPeriod } = require('../config/dates');
+const { isVotingPeriod } = require('../config/dates');
 
 // @desc    Obtener todas las categorías activas
 // @route   GET /api/votes/categories
@@ -62,7 +62,7 @@ exports.getCategory = async (req, res, next) => {
 exports.vote = async (req, res, next) => {
   try {
     // Verificar que estamos dentro del período de votación
-    if (!isProposalPeriod()) {
+    if (!isVotingPeriod()) {
       return res.status(400).json({
         success: false,
         message: 'El período de votación ha cerrado. Los resultados estarán disponibles pronto.'
@@ -142,10 +142,17 @@ exports.vote = async (req, res, next) => {
       option: optionText
     });
 
-    // Actualizar contador de votos y lista de votantes en la opción
-    option.votes += 1;
-    option.voters.push(req.user._id);
-    await category.save();
+    // Encontrar el índice de la opción
+    const optionIndex = category.options.findIndex(opt => opt.text === optionText);
+
+    // Actualizar contador de votos y lista de votantes usando operadores atómicos
+    await Category.updateOne(
+      { _id: req.params.id },
+      {
+        $inc: { [`options.${optionIndex}.votes`]: 1 },
+        $push: { [`options.${optionIndex}.voters`]: req.user._id }
+      }
+    );
 
     // Actualizar lista de categorías votadas del usuario
     await User.findByIdAndUpdate(req.user._id, {

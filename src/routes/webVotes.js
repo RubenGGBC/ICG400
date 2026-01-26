@@ -4,7 +4,7 @@ const Category = require('../models/Category');
 const Vote = require('../models/Vote');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
-const { isProposalPeriod } = require('../config/dates');
+const { isVotingPeriod } = require('../config/dates');
 
 // @desc    Procesar voto desde formulario
 // @route   POST /categories/:id/vote
@@ -12,7 +12,7 @@ const { isProposalPeriod } = require('../config/dates');
 router.post('/categories/:id/vote', protect, async (req, res) => {
   try {
     // Verificar que estamos dentro del período de votación
-    if (!isProposalPeriod()) {
+    if (!isVotingPeriod()) {
       return res.redirect('/categories?error=' + encodeURIComponent('El período de votación ha cerrado. Los resultados estarán disponibles pronto.'));
     }
 
@@ -65,10 +65,17 @@ router.post('/categories/:id/vote', protect, async (req, res) => {
       option: optionText
     });
 
-    // Actualizar contador
-    option.votes += 1;
-    option.voters.push(req.user._id);
-    await category.save();
+    // Encontrar el índice de la opción
+    const optionIndex = category.options.findIndex(opt => opt.text === optionText);
+
+    // Actualizar contador y votantes usando operadores atómicos (evita problemas de validación)
+    await Category.updateOne(
+      { _id: req.params.id },
+      {
+        $inc: { [`options.${optionIndex}.votes`]: 1 },
+        $push: { [`options.${optionIndex}.voters`]: req.user._id }
+      }
+    );
 
     // Actualizar usuario
     const updatedUser = await User.findByIdAndUpdate(
@@ -78,13 +85,10 @@ router.post('/categories/:id/vote', protect, async (req, res) => {
     );
 
     // Buscar la siguiente categoría pendiente de votar (ordenadas por createdAt ascendente)
-    // Solo categorías activas y aprobadas
-    const allCategories = await Category.find({ 
-      isActive: true, 
-      $or: [
-        { status: 'approved' },
-        { isUserProposed: false }
-      ]
+    // Solo categorías activas y no rechazadas
+    const allCategories = await Category.find({
+      isActive: true,
+      status: { $ne: 'rejected' }
     }).sort('createdAt');
     const votedCategoryIds = updatedUser.votedCategories.map(id => id.toString());
 
