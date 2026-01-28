@@ -16,6 +16,9 @@
                     <a href="/admin/results" class="modal-close-btn" title="Volver">✕</a>
                     <h2>Resultados Detallados</h2>
                     <p><%= category.title %></p>
+                    <% if (category.description) { %>
+                        <p class="category-description"><%= category.description %></p>
+                    <% } %>
                 </div>
 
                 <%- include('../partials/message') %>

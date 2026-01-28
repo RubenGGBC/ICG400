@@ -82,6 +82,9 @@
                                 <div class="revealed-header">
                                     <div class="category-badge"><%= index + 1 %></div>
                                     <h3><%= category.title %></h3>
+                                    <% if (category.description) { %>
+                                        <p class="category-description"><%= category.description %></p>
+                                    <% } %>
                                     <% if (category.isUserProposed && category.proposedByUsername) { %>
                                         <p class="proposed-by-footer">
                                             Propuesta por: <strong><%= category.proposedByUsername %></strong>
